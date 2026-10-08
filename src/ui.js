@@ -69,7 +69,7 @@ function renderSetup() {
       <div class="err" id="su-err"></div>
       <button class="btn pri" type="submit">Create encrypted vault</button>
     </form>
-    <p class="small muted" style="margin-top:14px">Data stays on this device (${NATIVE ? 'private app storage' : 'browser storage'}, AES-256-GCM, PBKDF2 ${PBKDF2_ITER.toLocaleString()} iterations). Nothing is sent to any server.</p>
+    <p class="small muted" style="margin-top:14px">Data stays on this device (${NATIVE ? 'private app storage' : 'browser storage'}, AES-256-GCM, PBKDF2 ${PBKDF2_ITER.toLocaleString(LOCALE)} iterations). Your vault data is never sent anywhere.</p>
   </div></div><div class="lock-brand">${BRAND_HTML}</div>`;
   const pw = $('#su-pw'); pw.oninput = () => { const s = pwStrength(pw.value); const c = ['#b23a3a', '#b23a3a', '#c9822b', '#c9a22b', '#2f7d4f', '#2f7d4f'][s]; $('#su-str').style.cssText = `width:${s * 20}%;background:${c}`; };
   $('#setup').onsubmit = async e => {
@@ -123,8 +123,10 @@ function startShell() {
     </div></div>`;
   $('#gsearch').addEventListener('keydown', e => { if (e.key === 'Enter') go('inventory', { q: e.target.value }); });
   go(VIEW === 'item' && !item(PARAMS.id) ? 'dashboard' : VIEW, PARAMS);
+  afterUnlock();
 }
 function renderNav() {
+  scheduleReminders();
   const al = computeAlerts().filter(a => a.sev === 'bad').length;
   $('#nav').innerHTML = NAV.map(([k, l]) => k === 'sep' ? '<div class="sep"></div>' :
     `<button data-act="nav" data-view="${k}" class="${VIEW === k || (k === 'inventory' && VIEW === 'item') ? 'on' : ''}">${svgI(k)}${l}${k === 'dashboard' && al ? `<span class="badge">${al}</span>` : ''}</button>`).join('');

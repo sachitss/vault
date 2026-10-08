@@ -579,4 +579,5 @@ function hideSplash() {
   const msg = document.getElementById('splash-msg'); if (msg) msg.textContent = 'Opening encrypted storage';
   try { (await vaultExists()) ? renderLock() : renderSetup(); } catch (e) { document.body.innerHTML = `<div class="lock"><div class="card"><h1>Storage unavailable</h1><p>${esc(e.message)}</p><p class="small">Private browsing windows often block storage. Open the file in a normal window.</p></div></div>`; }
   hideSplash();
+  startBackgroundChecks();
 })();

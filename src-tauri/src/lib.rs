@@ -5,7 +5,8 @@
 //! cannot do: a private, non-evictable storage location per user account, native
 //! save/open dialogs, opening links in the system browser, QR scanning with the
 //! camera on phones and tablets, a single instance on desktop (two windows must
-//! never edit the same vault at once) and remembered window size.
+//! never edit the same vault at once), remembered window size, reminder
+//! notifications and signed automatic updates on desktop.
 //!
 //! No network access is configured: the Content-Security-Policy in tauri.conf.json
 //! allows only Tauri's local IPC channel.
@@ -35,6 +36,9 @@ pub fn run() {
                 }
             }))
             .plugin(tauri_plugin_window_state::Builder::default().build())
+            // signed updates from GitHub Releases (public key in tauri.conf.json)
+            .plugin(tauri_plugin_updater::Builder::new().build())
+            .plugin(tauri_plugin_process::init())
             .invoke_handler(tauri::generate_handler![print_page]);
     }
 
@@ -47,6 +51,8 @@ pub fn run() {
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_opener::init())
+        // reminder notifications (scheduled in the OS on phones and tablets)
+        .plugin(tauri_plugin_notification::init())
         .run(tauri::generate_context!())
         .expect("error while running Valuables Vault");
 }

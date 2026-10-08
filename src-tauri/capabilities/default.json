@@ -1,8 +1,10 @@
 {
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "default",
-  "description": "What the app window may do: native save/open dialogs, write the file the user picked, open links in the system browser. Nothing else — no shell, no network, no arbitrary file access.",
-  "windows": ["main"],
+  "description": "What the app window may do: native save/open dialogs, write the file the user picked, open links in the system browser, show reminder notifications. No shell and no file access beyond the file the user picks; the only network request is the update check at GitHub.",
+  "windows": [
+    "main"
+  ],
   "permissions": [
     "core:default",
     "dialog:allow-save",
@@ -10,6 +12,7 @@
     "dialog:allow-message",
     "dialog:allow-ask",
     "fs:allow-write-file",
-    "opener:default"
+    "opener:default",
+    "notification:default"
   ]
 }

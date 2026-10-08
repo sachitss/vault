@@ -6,7 +6,7 @@ import fs from 'node:fs';
 import * as acorn from 'acorn';
 import * as walk from 'acorn-walk';
 
-const files = ['platform.js', 'core.js', 'ui.js', 'views2.js', 'data.js'].map(f => new URL(`../src/${f}`, import.meta.url));
+const files = ['platform.js', 'core.js', 'ui.js', 'views2.js', 'data.js', 'updates.js'].map(f => new URL(`../src/${f}`, import.meta.url));
 const out = new Set();
 const letters = /[A-Za-z]{2,}/;
 

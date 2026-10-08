@@ -35,7 +35,11 @@ function buildDict(lang) {
   for (const [k, v] of Object.entries(src)) {
     if (!v || k.startsWith('//')) continue;
     if (/\{\d\}/.test(k)) {
-      const re = new RegExp('^' + k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\\\{(\d)\\\}/g, '(.+?)') + '$', 's');
+      // short patterns that start with a placeholder ("{0} open", "{0} days") only match numbers,
+      // so free text such as "… cleared by browsers" is never half-translated
+      const lit = k.replace(/\{\d\}/g, '').replace(/[\s·,:;()—–/-]/g, '');
+      const ph = k.startsWith('{') && lit.length < 7 ? '(\\d[\\d.,]*)' : '(.+?)';
+      const re = new RegExp('^' + k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\\\{(\d)\\\}/g, ph) + '$', 's');
       pats.push([re, v, k.replace(/\{\d\}/g, '').length]);
     } else exact.set(i18nNorm(k), v);
   }

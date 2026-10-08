@@ -22,7 +22,7 @@
       }
     ],
     "security": {
-      "csp": "default-src 'none'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; frame-src 'self' blob: data:; media-src blob: mediastream:; connect-src ipc: http://ipc.localhost blob: data:; worker-src blob:; font-src 'self' data:",
+      "csp": "default-src 'none'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; frame-src 'self' blob: data:; media-src blob: mediastream:; connect-src ipc: http://ipc.localhost blob: data: https://api.github.com; worker-src blob:; font-src 'self' data:",
       "dangerousDisableAssetCspModification": true
     }
   },
@@ -82,6 +82,18 @@
     },
     "iOS": {
       "minimumSystemVersion": "14.0"
+    },
+    "createUpdaterArtifacts": true
+  },
+  "plugins": {
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDAzMDJFQjNFMEIyMjRCNDcKUldSSFN5SUxQdXNDQXlzTkZQOFFiRTdPQUx2WGw0Q0czV25XZTBGc1NIWFVWRG5qanF3YUVFNHYK",
+      "endpoints": [
+        "https://github.com/sachitss/vault/releases/latest/download/latest.json"
+      ],
+      "windows": {
+        "installMode": "passive"
+      }
     }
   }
 }

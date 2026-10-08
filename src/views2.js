@@ -210,7 +210,7 @@ VIEWS.settings = () => {
     <label class="f">Auto-lock after inactivity (minutes)<input type="number" name="autoLockMin" min="1" max="120" value="${st.autoLockMin}"></label>
     <label class="row small"><input type="checkbox" class="chk" name="revealNeedsPassword" ${st.revealNeedsPassword ? 'checked' : ''}> Re-enter password to reveal masked numbers</label></div>
     <div class="row" style="margin-top:10px"><button class="btn" type="button" data-act="change-pw">Change vault password</button></div>
-    <p class="small muted">Encryption: AES-256-GCM; key derived with PBKDF2-SHA-256 (${(META?.iter || PBKDF2_ITER).toLocaleString()} iterations). Failed unlocks are throttled after 5 attempts. Biometric unlock, PIN and 2FA are planned for a later version.</p></fieldset>
+    <p class="small muted">Encryption: AES-256-GCM; key derived with PBKDF2-SHA-256 (${(META?.iter || PBKDF2_ITER).toLocaleString(LOCALE)} iterations). Failed unlocks are throttled after 5 attempts. Biometric unlock, PIN and 2FA are planned for a later version.</p></fieldset>
   <fieldset><legend>Exchange rates → ${esc(st.baseCurrency)}</legend><p class="small muted" style="margin-top:0">1 unit of the currency = x ${esc(st.baseCurrency)}. Enter rates yourself (e.g. from ECB / Nepal Rastra Bank) — the app never fetches them online.</p>
     <div class="fields">${SCHEMA.currencies.filter(c => c !== st.baseCurrency).map(c => `<label class="f">${c}<input type="number" step="any" name="fx.${c}" value="${esc(st.fx[c] ?? '')}"></label>`).join('')}</div>
     <label class="f" style="margin-top:8px">Rates as of<input type="date" name="fxDate" value="${esc(st.fxDate)}"></label></fieldset>
@@ -224,10 +224,12 @@ VIEWS.settings = () => {
   <div class="grid g2" style="margin-top:14px">
    <div class="card"><h3>Storage & synchronisation</h3><dl class="kv"><dt>Data location</dt><dd>${NATIVE ? `Private app storage of Valuables Vault on this ${Platform.mobile ? 'device' : 'computer'} (${Platform.name}), encrypted` : 'This browser on this device (IndexedDB), encrypted'}</dd><dt>Cloud sync</dt><dd><span class="pill">Off</span> — not available in the prototype; planned as opt-in, end-to-end encrypted</dd>
      <dt>Records</dt><dd>${S.items.length} items · ${S.files.length} files · ${S.audit.length} audit entries</dd><dt>Persistent storage</dt><dd id="persist">checking…</dd><dt>Version</dt><dd>${APP_VERSION}</dd></dl></div>
+   ${updatesSettingsHTML()}
    <div class="card"><h3>Data</h3><div class="grid"><button class="btn" data-act="load-sample">Load sample data</button><button class="btn" data-act="remove-sample">Remove sample data</button><button class="btn danger" data-act="wipe">Erase vault on this device…</button></div>
    <p class="small muted">Erasing removes all encrypted data from this browser. Make sure you have a verified backup first.</p></div></div>`;
 };
 AFTER.settings = () => {
+  bindUpdatesSettings();
   if (NATIVE) { const e = $('#persist'); if (e) e.innerHTML = '<span class="pill ok">app storage — not cleared by browsers</span>'; return bindSettingsForm(); }
   navigator.storage?.persisted?.().then(p => { const e = $('#persist'); if (e) e.innerHTML = p ? '<span class="pill ok">granted</span>' : '<span class="pill warn">not granted</span> <button class="btn sm" data-act="persist">Request</button>'; });
   bindSettingsForm();

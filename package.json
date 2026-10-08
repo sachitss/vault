@@ -1,9 +1,9 @@
 {
   "name": "valuables-vault",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "private": true,
-  "description": "Secure, offline-first inventory for valuables, safes and bank lockers. Powered by Ing.-Büro Sachit Shrestha.",
-  "author": "Ing.-Büro Sachit Shrestha <support@medtec24.com>",
+  "description": "Secure, offline-first inventory for valuables, safes and bank lockers. Powered by Ing.-B\u00fcro Sachit Shrestha.",
+  "author": "Ing.-B\u00fcro Sachit Shrestha <support@medtec24.com>",
   "license": "UNLICENSED",
   "homepage": "https://github.com/sachitss/vault",
   "scripts": {

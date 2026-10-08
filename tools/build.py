@@ -16,13 +16,13 @@ import base64, hashlib, json, pathlib, shutil, sys
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 SRC, ASSETS, DIST = ROOT / 'src', ROOT / 'assets', ROOT / 'dist'
 NM = ROOT / 'node_modules'
-APP_FILES = ['platform.js', 'i18n.js', 'core.js', 'ui.js', 'views2.js', 'data.js']
+APP_FILES = ['platform.js', 'i18n.js', 'core.js', 'ui.js', 'views2.js', 'data.js', 'updates.js']
 LIBS = ['xlsx/dist/xlsx.full.min.js', 'exceljs/dist/exceljs.min.js', 'qrcode-generator/dist/qrcode.js']
 
 CSP_STANDALONE = ("default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval'; style-src 'unsafe-inline'; "
-                  "img-src data: blob:; frame-src blob:; media-src blob: mediastream:; connect-src blob: data:; worker-src blob:; font-src data:")
+                  "img-src data: blob:; frame-src blob:; media-src blob: mediastream:; connect-src blob: data: https://api.github.com; worker-src blob:; font-src data:")
 CSP_PWA = ("default-src 'none'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'unsafe-inline'; "
-           "img-src 'self' data: blob:; frame-src blob:; media-src blob: mediastream:; connect-src 'self' blob: data:; "
+           "img-src 'self' data: blob:; frame-src blob:; media-src blob: mediastream:; connect-src 'self' blob: data: https://api.github.com; "
            "worker-src 'self' blob:; manifest-src 'self'; font-src data:")
 
 
