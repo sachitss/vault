@@ -1,4 +1,4 @@
-﻿LangString addOrReinstall ${LANG_NEPALI} "कम्पोनेन्टहरू थप्नुहोस्/पुनः इन्स्टल गर्नुहोस्"
+LangString addOrReinstall ${LANG_NEPALI} "कम्पोनेन्टहरू थप्नुहोस्/पुनः इन्स्टल गर्नुहोस्"
 LangString alreadyInstalled ${LANG_NEPALI} "पहिले नै इन्स्टल गरिएको छ"
 LangString alreadyInstalledLong ${LANG_NEPALI} "${PRODUCTNAME} ${VERSION} पहिले नै इन्स्टल गरिएको छ। तपाईंले गर्न चाहनुभएको कार्य छान्नुहोस् र जारी राख्न अर्को बटनमा क्लिक गर्नुहोस्।"
 LangString appRunning ${LANG_NEPALI} "{{product_name}} चलिरहेको छ! कृपया पहिले यसलाई बन्द गरेर फेरि प्रयास गर्नुहोस्।"
