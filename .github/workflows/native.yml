@@ -126,7 +126,20 @@ jobs:
           $conf.bundle.windows | Add-Member -NotePropertyName timestampUrl -NotePropertyValue 'http://timestamp.digicert.com' -Force
           $conf | ConvertTo-Json -Depth 20 | Set-Content src-tauri/tauri.conf.json -Encoding utf8
 
-      - name: Build installers
+      - name: Windows installer in Nepali (add the language to Tauri's NSIS)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          # 1) let Tauri download its NSIS (English-only installer, also compiles the app once)
+          '{"bundle":{"windows":{"nsis":{"languages":["English"]}}}}' | Set-Content -Encoding utf8NoBOM $env:RUNNER_TEMP/nsis-en.json
+          npx tauri build --bundles nsis --config $env:RUNNER_TEMP/nsis-en.json
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+          # 2) NSIS has no Nepali; add our Nepali.nlf / Nepali.nsh (src-tauri/nsis)
+          $lang = Join-Path $env:LOCALAPPDATA 'tauri\NSIS\Contrib\Language files'
+          if (-not (Test-Path $lang)) { Write-Error "NSIS language folder not found: $lang"; exit 1 }
+          Copy-Item src-tauri/nsis/Nepali.nlf, src-tauri/nsis/Nepali.nsh $lang -Force
+          Get-ChildItem $lang -Filter 'Nepali.*'
+
         shell: bash
         env:
           APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}

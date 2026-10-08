@@ -16,17 +16,38 @@ import base64, hashlib, json, pathlib, shutil, sys
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 SRC, ASSETS, DIST = ROOT / 'src', ROOT / 'assets', ROOT / 'dist'
 NM = ROOT / 'node_modules'
-APP_FILES = ['platform.js', 'core.js', 'ui.js', 'views2.js', 'data.js']
+APP_FILES = ['platform.js', 'i18n.js', 'core.js', 'ui.js', 'views2.js', 'data.js']
 LIBS = ['xlsx/dist/xlsx.full.min.js', 'exceljs/dist/exceljs.min.js', 'qrcode-generator/dist/qrcode.js']
 
 CSP_STANDALONE = ("default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval'; style-src 'unsafe-inline'; "
-                  "img-src data: blob:; frame-src blob:; media-src blob: mediastream:; connect-src blob: data:; worker-src blob:")
+                  "img-src data: blob:; frame-src blob:; media-src blob: mediastream:; connect-src blob: data:; worker-src blob:; font-src data:")
 CSP_PWA = ("default-src 'none'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'unsafe-inline'; "
            "img-src 'self' data: blob:; frame-src blob:; media-src blob: mediastream:; connect-src 'self' blob: data:; "
-           "worker-src 'self' blob:; manifest-src 'self'")
+           "worker-src 'self' blob:; manifest-src 'self'; font-src data:")
+
+
+LANGS = ['de', 'ne']                       # English is the source language
+FONT = NM / '@fontsource/noto-sans-devanagari/files'
+DEVANAGARI = 'U+0900-097F, U+1CD0-1CF9, U+200C-200D, U+20A8, U+20B9, U+25CC, U+A830-A839, U+A8E0-A8FF'
 
 
 def read(p): return pathlib.Path(p).read_text(encoding='utf-8')
+
+
+def i18n_json() -> str:
+    data = {}
+    for lang in LANGS:
+        d = json.loads(read(SRC / 'i18n' / f'{lang}.json'))
+        data[lang] = {k: v for k, v in d.items() if not k.startswith('//') and v}
+    return json.dumps(data, ensure_ascii=False, sort_keys=True)
+
+
+def font_css() -> str:
+    # Noto Sans Devanagari (SIL Open Font License) so Nepali renders on every device, used only for Devanagari characters
+    return ''.join(
+        "@font-face{font-family:'Noto Sans Devanagari';font-style:normal;font-display:swap;"
+        f"font-weight:{w};src:url(data:font/woff2;base64,{b64(FONT / f'noto-sans-devanagari-devanagari-{w}-normal.woff2')}) format('woff2');"
+        f"unicode-range:{DEVANAGARI}}}" for w in (400, 600))
 def b64(p): return base64.b64encode(pathlib.Path(p).read_bytes()).decode()
 def safe(js): return js.replace('</script', '<\\/script')
 
@@ -70,10 +91,10 @@ def page(version: str, mode: str) -> str:
 <meta name="generator" content="Valuables Vault {version}">
 <title>Valuables Vault</title>
 {favicon}
-{head_extra}<style>{read(SRC / 'app.css')}</style></head><body>
+{head_extra}<style>{font_css()}{read(SRC / 'app.css')}</style></head><body>
 {splash}
 <noscript>JavaScript is required.</noscript>
-<script>window.__SCHEMA={json.dumps(schema)};window.__SAMPLE_FILES={json.dumps(samples)};window.__BRAND_LOGO={json.dumps(logo)};</script>
+<script>window.__I18N={safe(i18n_json())};window.__SCHEMA={json.dumps(schema)};window.__SAMPLE_FILES={json.dumps(samples)};window.__BRAND_LOGO={json.dumps(logo)};</script>
 ''' + ''.join(f'<script>{safe(read(NM / l))}</script>\n' for l in LIBS)
             + f'<script>{safe(app)}</script>\n{sw}</body></html>\n')
 

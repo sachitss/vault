@@ -201,6 +201,7 @@ VIEWS.settings = () => {
   const st = S.settings;
   return `<h1>Settings</h1><form id="setf" class="grid g2">
   <fieldset><legend>General</legend><div class="fields">
+    <div class="f"><span>Language</span>${langPickerHTML()}</div>
     <label class="f">Your name (audit log & reports)<input name="userName" value="${esc(st.userName)}"></label>
     <label class="f">Base currency${sel('baseCurrency', curOpts(), st.baseCurrency)}</label>
     <label class="f">CSV delimiter${sel('csvDelimiter', [[';', 'Semicolon (Excel DE/EU)'], [',', 'Comma (Excel EN)']], st.csvDelimiter)}</label>

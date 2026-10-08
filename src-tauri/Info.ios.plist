@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>CFBundleDevelopmentRegion</key><string>en</string>
+  <key>CFBundleLocalizations</key><array><string>en</string><string>de</string><string>ne</string></array>
+  <key>NSCameraUsageDescription</key><string>The camera is used to photograph your items and to scan QR labels. Images stay encrypted on this device.</string>
+  <key>NSPhotoLibraryUsageDescription</key><string>Choose photos of your items. They are stored encrypted on this device.</string>
+</dict>
+</plist>

@@ -44,22 +44,38 @@
       "icons/icon.ico"
     ],
     "windows": {
-      "webviewInstallMode": { "type": "embedBootstrapper" },
+      "webviewInstallMode": {
+        "type": "embedBootstrapper"
+      },
       "nsis": {
         "installMode": "currentUser",
-        "languages": ["English", "German"],
-        "displayLanguageSelector": false
+        "languages": [
+          "English",
+          "German",
+          "Nepali"
+        ],
+        "displayLanguageSelector": true,
+        "customLanguageFiles": {
+          "Nepali": "nsis/Tauri-Nepali.nsh"
+        }
       },
       "wix": {
-        "language": ["en-US", "de-DE"]
+        "language": [
+          "en-US",
+          "de-DE"
+        ]
       }
     },
     "macOS": {
       "minimumSystemVersion": "10.15"
     },
     "linux": {
-      "deb": { "section": "utils" },
-      "rpm": { "release": "1" }
+      "deb": {
+        "section": "utils"
+      },
+      "rpm": {
+        "release": "1"
+      }
     },
     "android": {
       "minSdkVersion": 26

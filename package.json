@@ -18,6 +18,9 @@
     "xlsx": "0.18.5"
   },
   "devDependencies": {
-    "@tauri-apps/cli": "^2.12.1"
+    "@fontsource/noto-sans-devanagari": "^5.3.0",
+    "@tauri-apps/cli": "^2.12.1",
+    "acorn": "^8.19.0",
+    "acorn-walk": "^8.3.5"
   }
 }

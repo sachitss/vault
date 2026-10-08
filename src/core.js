@@ -198,8 +198,8 @@ function fx(v, cur) {
 function money(v, cur) {
   if (v == null || v === '' || isNaN(v)) return '—';
   cur = cur || S?.settings.baseCurrency || 'EUR';
-  try { return new Intl.NumberFormat('en-IE', { style: 'currency', currency: cur, maximumFractionDigits: Math.abs(v) >= 1000 ? 0 : 2 }).format(v); }
-  catch { return `${(+v).toLocaleString('en-IE')} ${cur}`; }
+  try { return new Intl.NumberFormat(LOCALE, { style: 'currency', currency: cur, maximumFractionDigits: Math.abs(v) >= 1000 ? 0 : 2 }).format(v); }
+  catch { return `${(+v).toLocaleString(LOCALE)} ${cur}`; }
 }
 const moneyBase = v => money(v, S.settings.baseCurrency);
 function fmtDate(iso) { if (!iso) return '—'; const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso); return m ? `${m[3]}.${m[2]}.${m[1]}` : iso; }

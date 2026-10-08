@@ -59,6 +59,7 @@ function pwStrength(p) {
 function renderSetup() {
   document.body.innerHTML = `<div class="lock"><div class="card">
     <h1>${LOGO} Valuables Vault</h1>
+    <div class="lang-first" translate="no"><b>Language · Sprache · भाषा</b>${langPickerHTML()}</div>
     <p class="muted">Create the vault password. It encrypts every record, photo and document on this device. <b>It cannot be recovered</b> — store it in a password manager or sealed with your estate papers.</p>
     <form id="setup" class="grid">
       <label class="f">Your name (shown in reports and the audit log)<input id="su-name" required value=""></label>
@@ -94,7 +95,7 @@ function renderLock(msg = '') {
       <button class="btn pri" type="submit">Unlock</button>
     </form>
     <p class="small muted" style="margin-top:14px">Forgot the password? The data cannot be decrypted without it. Restore from an encrypted backup whose password you know: <a href="#" id="ul-restore">restore backup</a>.</p>
-  </div></div><div class="lock-brand">${BRAND_HTML}</div>`;
+  </div></div><div class="lock-brand">${BRAND_HTML}</div><div class="lock-lang">${langPickerHTML()}</div>`;
   $('#ul-pw').focus();
   $('#unl').onsubmit = async e => {
     e.preventDefault(); $('#ul-err').textContent = 'Unlocking…';
@@ -136,6 +137,8 @@ function go(view, params = {}) {
   AFTER[view]?.(params);
 }
 const rerender = () => go(VIEW, PARAMS);
+/* called by setLang(): redraw the open screen so amounts use the new number format */
+function onLangChange() { if (typeof KEY !== 'undefined' && KEY && $('#app')) rerender(); }
 
 /* ---------- generic field rendering ---------- */
 function fieldHTML(f, val, name, extra = '') {

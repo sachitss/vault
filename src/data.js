@@ -64,10 +64,11 @@ AFTER.import = () => {
 };
 async function doExport(items, fmt, conf) {
   const d = S.settings.csvDelimiter;
-  if (fmt === 'csv') download(`inventory-${stamp()}.csv`, toCSV(items.map(i => flatItem(i, conf)), d), 'text/csv');
-  else if (fmt === 'csv-val') download(`valuations-${stamp()}.csv`, toCSV(valRows(items), d), 'text/csv');
-  else if (fmt === 'csv-ins') download(`insurance-${stamp()}.csv`, toCSV(insRows(conf), d), 'text/csv');
-  else if (fmt === 'csv-loc') download(`locations-${stamp()}.csv`, toCSV(locRows(conf), d), 'text/csv');
+  const csv = (rows, dl) => toCSV(LANG === 'en' ? rows : rows.map(r => Object.fromEntries(Object.entries(r).map(([k, v]) => [tr(k), v]))), dl);
+  if (fmt === 'csv') download(`inventory-${stamp()}.csv`, csv(items.map(i => flatItem(i, conf)), d), 'text/csv');
+  else if (fmt === 'csv-val') download(`valuations-${stamp()}.csv`, csv(valRows(items), d), 'text/csv');
+  else if (fmt === 'csv-ins') download(`insurance-${stamp()}.csv`, csv(insRows(conf), d), 'text/csv');
+  else if (fmt === 'csv-loc') download(`locations-${stamp()}.csv`, csv(locRows(conf), d), 'text/csv');
   else await exportXLSX(items, conf);
   audit('Export performed', 'export', fmt, '', `${items.length} item(s)${conf ? ', confidential included' : ''}`); saveSoon(); toast('Export created');
 }
@@ -111,6 +112,7 @@ async function exportXLSX(items, conf) {
   sheet('Documents', S.files.filter(f => items.some(i => i.id === f.itemId)).map(f => ({ 'Inventory ID': f.itemId, 'Kind': f.kind, 'Type / view': f.kind === 'photo' ? f.view : f.docType, 'File name': f.name, 'Date': f.kind === 'photo' ? f.photoDate : f.docDate || f.uploadDate, 'Uploaded': f.uploadDate, 'Size (KB)': Math.round(f.size / 1024), 'Caption / reference': f.caption || f.ref || '', 'SHA-256': f.sha256 })));
   sheet('Missing Information', items.map(i => { const s = itemScore(i); return { 'Inventory ID': i.id, 'Item': i.name, 'Documentation %': s.score, 'Missing': s.missing.join('; ') }; }).filter(r => r.Missing));
   sheet('Change History', S.audit.slice().reverse().map(a => ({ 'Date/Time': fmtTs(a.ts), 'User': a.user, 'Action': a.action, 'Entity': a.entity, 'Ref': a.ref, 'Field': a.field, 'Previous value': a.prev, 'New value': a.next })));
+  trWorkbook(wb);
   const buf = await wb.xlsx.writeBuffer();
   download(`valuables-inventory-${stamp()}.xlsx`, new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
 }
@@ -148,7 +150,7 @@ async function startImport(file) {
     if (rows.length < 2) return toast('No data rows found.');
     let hi = rows.findIndex(r => r.some(c => /item name|inventory id/i.test(String(c)))); if (hi < 0) hi = 0;
     const headers = rows[hi].map(String); const data = rows.slice(hi + 1).filter(r => !String(r[0]).startsWith('#'));
-    const map = {}; for (const c of ALL_COLS) { const i = headers.findIndex(h => norm(h) === norm(c.label) || norm(h) === norm(c.k) || norm(h) === norm(c.k.replace('details.', ''))); if (i > -1) map[c.k] = i; }
+    const map = {}; for (const c of ALL_COLS) { const i = headers.findIndex(h => norm(h) === norm(c.label) || norm(h) === norm(c.k) || norm(h) === norm(c.k.replace('details.', '')) || sameInAnyLang(h, c.label)); if (i > -1) map[c.k] = i; }
     IMP = { file: file.name, sheet: sn, headers, data, map, dupMode: 'skip' };
     renderImportMapping();
   } catch (e) { toast('Could not read file: ' + e.message); }
@@ -175,7 +177,7 @@ function importRowsValidate() {
       if (c.k.startsWith('details.')) rec.details[c.k.slice(8)] = v; else rec[c.k] = v;
     }
     if (!rec.name) errors.push('Item name missing');
-    rec.cat = String(rec.cat || '').toUpperCase(); if (!SCHEMA.categories[rec.cat]) { const byName = Object.entries(SCHEMA.categories).find(([, x]) => norm(x.name) === norm(rec.cat)); if (byName) rec.cat = byName[0]; else errors.push(`Category "${rec.cat}" unknown (use ${Object.keys(SCHEMA.categories).join(', ')})`); }
+    rec.cat = String(rec.cat || '').toUpperCase(); if (!SCHEMA.categories[rec.cat]) { const byName = Object.entries(SCHEMA.categories).find(([, x]) => norm(x.name) === norm(rec.cat) || sameInAnyLang(rec.cat, x.name)); if (byName) rec.cat = byName[0]; else errors.push(`Category "${rec.cat}" unknown (use ${Object.keys(SCHEMA.categories).join(', ')})`); }
     rec.currency = String(rec.currency || S.settings.baseCurrency).toUpperCase(); if (!/^[A-Z]{3}$/.test(rec.currency)) errors.push(`Currency "${rec.currency}" invalid`);
     if (rec.ownershipPct !== undefined && (rec.ownershipPct < 0 || rec.ownershipPct > 100)) errors.push('Ownership % outside 0–100');
     if (rec.purchasePrice !== undefined && rec.purchasePrice < 0) errors.push('Negative purchase price');
@@ -246,7 +248,7 @@ VIEWS.reports = () => `<h1>Reports</h1><p class="muted">Reports open as a print-
 
 function repFilter() { const f = $('#repf') ? formObj($('#repf')) : { photos: true }; let items = activeItems(); if (f.owner) items = items.filter(i => i.ownerId === f.owner || (i.coOwnerIds || []).includes(f.owner)); if (f.loc) items = items.filter(i => i.locationId === f.loc); if (f.cat) items = items.filter(i => i.cat === f.cat); return { items, f }; }
 async function photoData(f, max = 900) { const buf = await getBlob(f.id); if (!buf) return ''; if (/heic|heif/i.test(f.mime)) return ''; return makeThumb(new Blob([buf], { type: f.mime }), max); }
-const REP_CSS = `body{font:11pt/1.4 "Segoe UI",Arial,sans-serif;color:#1d2330;margin:0}main{padding:18mm 16mm}h1{font-size:19pt;margin:0 0 2mm;color:#1f3a5f}h2{font-size:13pt;margin:7mm 0 2mm;color:#1f3a5f;border-bottom:1px solid #d3cec4;padding-bottom:1mm}h3{font-size:11.5pt;margin:4mm 0 1mm}
+const REP_CSS = `body{font:11pt/1.4 "Segoe UI",Arial,"Noto Sans Devanagari","Nirmala UI",sans-serif;color:#1d2330;margin:0}main{padding:18mm 16mm}h1{font-size:19pt;margin:0 0 2mm;color:#1f3a5f}h2{font-size:13pt;margin:7mm 0 2mm;color:#1f3a5f;border-bottom:1px solid #d3cec4;padding-bottom:1mm}h3{font-size:11.5pt;margin:4mm 0 1mm}
   .meta{color:#555;font-size:9.5pt;margin-bottom:5mm}.conf{display:inline-block;border:1px solid #b23a3a;color:#b23a3a;padding:1px 6px;font-size:8.5pt;font-weight:600;letter-spacing:.05em}
   table{border-collapse:collapse;width:100%;font-size:9.5pt;margin:2mm 0}th,td{border-bottom:1px solid #e4e0d8;padding:4px 6px;text-align:left;vertical-align:top}th{background:#f2efe9;font-size:8.5pt;text-transform:uppercase;letter-spacing:.03em}td.n,th.n{text-align:right;white-space:nowrap}
   .item{page-break-inside:avoid;border:1px solid #e4e0d8;border-radius:4px;padding:4mm;margin:4mm 0;display:grid;grid-template-columns:52mm 1fr;gap:5mm}.item img{width:52mm;height:40mm;object-fit:cover;border-radius:3px;background:#f2efe9}
@@ -256,11 +258,13 @@ const REP_CSS = `body{font:11pt/1.4 "Segoe UI",Arial,sans-serif;color:#1d2330;ma
   @media print{.noprint{display:none}main{padding:0}@page{margin:14mm 12mm 16mm}}.noprint{position:sticky;top:0;background:#1f3a5f;color:#fff;padding:8px 16px;display:flex;gap:10px;align-items:center}.noprint button{padding:5px 12px;cursor:pointer}
   .rbrand{display:flex;justify-content:flex-end;align-items:center;gap:4mm;margin-top:8mm;padding-top:3mm;border-top:1px solid #e4e0d8;page-break-inside:avoid}.rbrand img{height:14mm;width:auto}.rbrand div{font-size:8.5pt;color:#555;text-align:right;line-height:1.4}.rbrand b{color:#1d2330}.rbrand a{color:#1f3a5f}`;
 let REPWIN = null;
+/* the embedded Devanagari font, so Nepali reports print correctly everywhere */
+function fontFaceCSS() { return [...document.querySelectorAll('style')].map(s => (s.textContent.match(/@font-face\{[^}]*\}/g) || []).join('')).join(''); }
 function reportHTML(title, body, toolbar) {
-  return `<!doctype html><html><head><meta charset="utf-8"><title>${esc(title)}</title><style>${REP_CSS}</style></head><body>${toolbar ? `<div class="noprint"><b>${esc(title)}</b><span style="flex:1"></span><button onclick="print()">Print / Save as PDF</button><button onclick="close()">Close</button></div>` : ''}<main>
+  return trHTML(`<!doctype html><html lang="${LANG}"><head><meta charset="utf-8"><title>${esc(title)}</title><style>${LANG === 'ne' ? fontFaceCSS() : ''}${REP_CSS}</style></head><body>${toolbar ? `<div class="noprint"><b>${esc(title)}</b><span style="flex:1"></span><button onclick="print()">Print / Save as PDF</button><button onclick="close()">Close</button></div>` : ''}<main>
     <h1>${esc(title)}</h1><div class="meta">${esc(S.settings.userName)} · created ${fmtTs(nowISO())} · base currency ${S.settings.baseCurrency} · <span class="conf">CONFIDENTIAL</span></div>${body}
     <p class="note">Generated by Valuables Vault ${APP_VERSION}. Values as recorded by the owner; market value and insurance / replacement value differ. This report is not a valuation or legal document.</p>
-    <div class="rbrand">${BRAND_LOGO ? `<img src="${BRAND_LOGO}" alt="Team Nepal Solutions">` : ''}<div>Powered by<br><b>© Ing.-Büro Sachit Shrestha</b><br><a href="mailto:support@medtec24.com">support@medtec24.com</a></div></div></main></body></html>`;
+    <div class="rbrand">${BRAND_LOGO ? `<img src="${BRAND_LOGO}" alt="Team Nepal Solutions">` : ''}<div>Powered by<br><b>© Ing.-Büro Sachit Shrestha</b><br><a href="mailto:support@medtec24.com">support@medtec24.com</a></div></div></main></body></html>`);
 }
 function openReport(title, body) {
   audit('Report created', 'report', title, '', ''); saveSoon();
@@ -570,6 +574,7 @@ function hideSplash() {
 
 /* ---------- boot ---------- */
 (async function boot() {
+  startI18n();
   if (!window.crypto?.subtle || !window.indexedDB) { hideSplash(); document.body.innerHTML = '<div class="lock"><div class="card"><h1>Not supported</h1><p>This browser lacks Web Crypto or IndexedDB. Use a current Chrome, Edge, Firefox or Safari.</p></div></div>'; return; }
   const msg = document.getElementById('splash-msg'); if (msg) msg.textContent = 'Opening encrypted storage';
   try { (await vaultExists()) ? renderLock() : renderSetup(); } catch (e) { document.body.innerHTML = `<div class="lock"><div class="card"><h1>Storage unavailable</h1><p>${esc(e.message)}</p><p class="small">Private browsing windows often block storage. Open the file in a normal window.</p></div></div>`; }
