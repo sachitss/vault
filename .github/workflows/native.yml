@@ -140,6 +140,7 @@ jobs:
           Copy-Item src-tauri/nsis/Nepali.nlf, src-tauri/nsis/Nepali.nsh $lang -Force
           Get-ChildItem $lang -Filter 'Nepali.*'
 
+      - name: Build installers
         shell: bash
         env:
           APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
