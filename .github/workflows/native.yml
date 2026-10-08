@@ -371,12 +371,19 @@ jobs:
           PROJ=$(ls -d src-tauri/gen/apple/*.xcodeproj | head -1)
           SCHEME=$(xcodebuild -list -project "$PROJ" | awk '/Schemes:/{f=1;next} f&&NF{print $1}' | grep -i ios | head -1)
           echo "Project $PROJ, scheme $SCHEME"
+          set +e
           xcodebuild -project "$PROJ" -scheme "$SCHEME" -configuration release -sdk iphoneos \
             -destination 'generic/platform=iOS' -derivedDataPath $RUNNER_TEMP/dd \
-            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" build 2>&1 \
-            | tee -a $RUNNER_TEMP/ios-build.log | grep -E "error|warning: unable|BUILD" || true
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" build > $RUNNER_TEMP/xcode.log 2>&1
+          rc=$?; set -e
+          cat $RUNNER_TEMP/xcode.log >> $RUNNER_TEMP/ios-build.log
+          tail -40 $RUNNER_TEMP/xcode.log
+          [ $rc -eq 0 ] || { echo "xcodebuild failed ($rc)"; exit 1; }
           APP=$(find $RUNNER_TEMP/dd/Build/Products -maxdepth 2 -name '*.app' -path '*iphoneos*' | head -1)
           [ -n "$APP" ] || { echo "::error::No .app produced"; exit 1; }
+          EXE=$(/usr/libexec/PlistBuddy -c "Print :CFBundleExecutable" "$APP/Info.plist")
+          [ -f "$APP/$EXE" ] || { echo "::error::App bundle has no executable ($EXE)"; ls -la "$APP"; exit 1; }
+          lipo -info "$APP/$EXE"; du -sh "$APP"
           V=$(node -p "require('./package.json').version")
           mkdir -p out $RUNNER_TEMP/ipa/Payload && cp -R "$APP" $RUNNER_TEMP/ipa/Payload/
           (cd $RUNNER_TEMP/ipa && zip -qry "$GITHUB_WORKSPACE/out/Valuables-Vault_${V}_ios-unsigned.ipa" Payload)
@@ -386,7 +393,7 @@ jobs:
         if: failure()
         run: |
           f=$RUNNER_TEMP/ios-build.log; [ -f "$f" ] || exit 0
-          msg=$(grep -iE "error|failed|exception" -A3 "$f" | tail -60 | sed 's/%/%25/g' | awk '{printf "%s%%0A", $0}')
+          msg=$(grep -E "error:|error\[|FAILED|failed|Exception" -B2 -A4 "$f" | grep -v "^--$" | tail -70 | sed 's/%/%25/g' | awk '{printf "%s%%0A", $0}')
           echo "::error title=iOS build::$msg"
 
       - name: Checksums
