@@ -2,7 +2,7 @@ name: Native apps
 
 # Builds the native installers from the same web code as the browser version:
 #   Windows  .msi + setup .exe   macOS  universal .dmg   Linux  .deb .rpm .AppImage
-#   Android  .apk + .aab         iOS    .ipa (only when Apple signing secrets are set)
+#   Android  .apk + .aab         iOS    .ipa (App Store build with Apple secrets, otherwise unsigned for sideloading)
 #
 # Runs when a release is published (the files are attached to it) and on demand
 # (Actions > Native apps > Run workflow; the files are kept as workflow artifacts,
@@ -325,27 +325,32 @@ jobs:
   ios:
     name: iOS + iPadOS
     runs-on: macos-latest
-    timeout-minutes: 60
+    timeout-minutes: 75
     env:
       HAS_APPLE: ${{ secrets.APPLE_CERTIFICATE != '' && secrets.APPLE_TEAM_ID != '' }}
     steps:
-      - name: Apple signing available?
-        if: env.HAS_APPLE != 'true'
-        run: |
-          echo "::notice::iOS skipped: Apple only installs signed apps. Add the APPLE_* secrets (Apple Developer Program membership) to build the .ipa. Until then, iPhone and iPad use the installable web app."
       - uses: actions/checkout@v4
-        if: env.HAS_APPLE == 'true'
       - uses: actions/setup-node@v4
-        if: env.HAS_APPLE == 'true'
         with: { node-version: 20, cache: npm }
       - uses: actions/setup-python@v5
-        if: env.HAS_APPLE == 'true'
         with: { python-version: '3.12' }
       - uses: dtolnay/rust-toolchain@stable
-        if: env.HAS_APPLE == 'true'
         with:
           targets: aarch64-apple-ios
-      - name: Build
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri -> target
+          key: ios
+
+      - name: Build the app (web layer) and generate the Xcode project
+        run: |
+          set -o pipefail
+          brew list xcodegen >/dev/null 2>&1 || brew install xcodegen
+          npm ci --no-audit --no-fund
+          python tools/build.py
+          npx tauri ios init --ci 2>&1 | tee $RUNNER_TEMP/ios-build.log
+
+      - name: Signed build (App Store / TestFlight)
         if: env.HAS_APPLE == 'true'
         env:
           APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
@@ -354,14 +359,50 @@ jobs:
           APPLE_API_ISSUER: ${{ secrets.APPLE_API_ISSUER }}
           APPLE_API_KEY: ${{ secrets.APPLE_API_KEY }}
         run: |
-          npm ci --no-audit --no-fund
-          python tools/build.py
-          npx tauri ios init --ci
-          npx tauri ios build --export-method app-store-connect --ci
-          mkdir -p out && find src-tauri/gen/apple/build -name '*.ipa' -exec cp {} out/ \;
+          set -o pipefail
+          npx tauri ios build --export-method app-store-connect --ci 2>&1 | tee $RUNNER_TEMP/ios-build.log
+          V=$(node -p "require('./package.json').version")
+          mkdir -p out && find src-tauri/gen/apple/build -name '*.ipa' -exec cp {} "out/Valuables-Vault_${V}_ios.ipa" \;
+
+      - name: Unsigned build (for sideloading with your own Apple ID)
+        if: env.HAS_APPLE != 'true'
+        run: |
+          set -o pipefail
+          PROJ=$(ls -d src-tauri/gen/apple/*.xcodeproj | head -1)
+          SCHEME=$(xcodebuild -list -project "$PROJ" | awk '/Schemes:/{f=1;next} f&&NF{print $1}' | grep -i ios | head -1)
+          echo "Project $PROJ, scheme $SCHEME"
+          xcodebuild -project "$PROJ" -scheme "$SCHEME" -configuration release -sdk iphoneos \
+            -destination 'generic/platform=iOS' -derivedDataPath $RUNNER_TEMP/dd \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" build 2>&1 \
+            | tee -a $RUNNER_TEMP/ios-build.log | grep -E "error|warning: unable|BUILD" || true
+          APP=$(find $RUNNER_TEMP/dd/Build/Products -maxdepth 2 -name '*.app' -path '*iphoneos*' | head -1)
+          [ -n "$APP" ] || { echo "::error::No .app produced"; exit 1; }
+          V=$(node -p "require('./package.json').version")
+          mkdir -p out $RUNNER_TEMP/ipa/Payload && cp -R "$APP" $RUNNER_TEMP/ipa/Payload/
+          (cd $RUNNER_TEMP/ipa && zip -qry "$GITHUB_WORKSPACE/out/Valuables-Vault_${V}_ios-unsigned.ipa" Payload)
+          echo "::notice::Unsigned iOS app built. Install it with Sideloadly or AltStore using your Apple ID (free accounts: re-sign every 7 days). For App Store/TestFlight add the APPLE_* secrets."
+
+      - name: Report build errors
+        if: failure()
+        run: |
+          f=$RUNNER_TEMP/ios-build.log; [ -f "$f" ] || exit 0
+          msg=$(grep -iE "error|failed|exception" -A3 "$f" | tail -60 | sed 's/%/%25/g' | awk '{printf "%s%%0A", $0}')
+          echo "::error title=iOS build::$msg"
+
+      - name: Checksums
+        run: |
           ls -la out
+          (cd out && shasum -a 256 * > SHA256SUMS-iOS.txt)
+
       - uses: actions/upload-artifact@v4
-        if: env.HAS_APPLE == 'true'
         with:
           name: native-iOS
           path: out/*
+          if-no-files-found: error
+
+      - name: Attach to release
+        if: env.RELEASE_TAG != ''
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.RELEASE_TAG }}
+          files: out/*
