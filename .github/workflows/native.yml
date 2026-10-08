@@ -156,6 +156,8 @@ jobs:
           ls -la out
           [ "$(ls out | wc -l)" -gt 0 ] || { echo "::error::No installers produced"; exit 1; }
           cd out && for f in *; do n=$(echo "$f" | tr ' ' '-'); [ "$f" = "$n" ] || mv "$f" "$n"; done
+          if command -v sha256sum >/dev/null; then sha256sum * > ../SHA256SUMS-${{ runner.os }}.txt; else shasum -a 256 * > ../SHA256SUMS-${{ runner.os }}.txt; fi
+          mv ../SHA256SUMS-${{ runner.os }}.txt .
 
       - uses: actions/upload-artifact@v4
         with:
@@ -252,7 +254,7 @@ jobs:
           mkdir -p out
           APK=$(ls src-tauri/gen/android/app/build/outputs/apk/universal/release/*.apk | head -1)
           $BT/zipalign -p -f 4 "$APK" aligned.apk
-          $BT/apksigner sign --ks $KS --ks-pass "pass:$KS_PASS" --key-pass "pass:$KEY_PASS" --ks-key-alias "$KEY_ALIAS" \
+          $BT/apksigner sign --v4-signing-enabled false --ks $KS --ks-pass "pass:$KS_PASS" --key-pass "pass:$KEY_PASS" --ks-key-alias "$KEY_ALIAS" \
             --out "out/Valuables-Vault_${V}_android-universal.apk" aligned.apk
           $BT/apksigner verify --print-certs "out/Valuables-Vault_${V}_android-universal.apk" | head -3
           AAB=$(ls src-tauri/gen/android/app/build/outputs/bundle/universalRelease/*.aab | head -1)
@@ -260,6 +262,7 @@ jobs:
           jarsigner -keystore $KS -storepass "$KS_PASS" -keypass "$KEY_PASS" -sigalg SHA256withRSA -digestalg SHA-256 \
             "out/Valuables-Vault_${V}_android.aab" "$KEY_ALIAS" > /dev/null
           rm -f $KS aligned.apk
+          (cd out && sha256sum * > SHA256SUMS-Android.txt)
           ls -la out
 
       - uses: actions/upload-artifact@v4
