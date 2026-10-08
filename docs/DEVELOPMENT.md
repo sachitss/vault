@@ -61,7 +61,7 @@ npx tauri android init && npx tauri android build --apk   # needs Android SDK + 
 
 Rules for the web code so it keeps working natively: save files through `download()` / `Platform.save()` (never `<a download>` alone on mobile), open reports with `openReport()`, and do not add network requests — the native CSP blocks them. New native features need a permission in `src-tauri/capabilities/`; grant the narrowest one.
 
-Signing secrets and what happens without them are listed at the top of `.github/workflows/native.yml`.
+Signing secrets and what happens without them are listed at the top of `.github/workflows/native.yml`. Google Play publishing (developer account, upload key, service account, store listing): **[GOOGLE_PLAY.md](GOOGLE_PLAY.md)**. For an Apple Developer *organisation* account, enrol with the D-U-N-S number `317353353`.
 
 ## Script installers
 

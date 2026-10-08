@@ -11,7 +11,8 @@ Evidence, valuations and insurance in one encrypted record per item — ready fo
 <a href="docs/USER_MANUAL.md">User manual</a> ·
 <a href="SECURITY.md">Security</a> ·
 <a href="docs/DATABASE.md">Database design</a> ·
-<a href="docs/ARCHITECTURE.md">Architecture</a></p>
+<a href="docs/ARCHITECTURE.md">Architecture</a> ·
+<a href="https://sachitss.github.io/vault/privacy.html">Privacy</a></p>
 
 ---
 

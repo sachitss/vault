@@ -3,7 +3,7 @@
 Outputs
   dist/valuables-vault.html   standalone single file (desktop installers, double-click use)
   dist/pwa/                   installable web app for GitHub Pages / any HTTPS host
-                              (index.html, manifest.webmanifest, sw.js, icons/)
+                              (index.html, manifest.webmanifest, sw.js, icons/, privacy.html)
 
 The build is deterministic: the same sources and library versions give
 byte-identical output, which CI uses to check that the committed
@@ -112,6 +112,7 @@ self.addEventListener('fetch', e => {{
 }});
 """
     (out / 'sw.js').write_text(sw, encoding='utf-8')
+    shutil.copy(SRC / 'privacy.html', out / 'privacy.html')   # privacy policy (app stores link to it)
     (out / '.nojekyll').write_text('')
 
 

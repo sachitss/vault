@@ -17,6 +17,11 @@ name: Native apps
 #       Signing + notarisation for macOS, and needed at all for iOS.
 #   WINDOWS_CERTIFICATE (base64 .pfx), WINDOWS_CERTIFICATE_PASSWORD
 #       Authenticode signing for Windows (avoids the SmartScreen warning).
+#   PLAY_SERVICE_ACCOUNT_JSON
+#       Google Cloud service-account key with release rights in Play Console account
+#       6218422303113506130. With it (and the ANDROID_KEYSTORE_* upload key), published
+#       releases are uploaded to Google Play as a draft on the internal testing track.
+#       See docs/GOOGLE_PLAY.md.
 on:
   release:
     types: [published]
@@ -24,6 +29,10 @@ on:
     inputs:
       release_tag:
         description: 'Attach the files to this existing release tag (e.g. v0.9.0). Leave empty to keep them as workflow artifacts only.'
+        required: false
+        default: ''
+      play_track:
+        description: 'Also upload the Android App Bundle to this Google Play track (internal, alpha, beta, production). Leave empty to skip.'
         required: false
         default: ''
 
@@ -37,6 +46,11 @@ concurrency:
 env:
   RELEASE_TAG: ${{ github.event.release.tag_name || inputs.release_tag }}
   CARGO_TERM_COLOR: always
+  # Google Play Console developer account (not a secret)
+  PLAY_DEVELOPER_ACCOUNT_ID: '6218422303113506130'
+  PLAY_PACKAGE_NAME: com.medtec24.valuablesvault
+  # published GitHub releases go to the internal testing track; manual runs use the play_track input
+  PLAY_TRACK: ${{ inputs.play_track || (github.event_name == 'release' && 'internal') || '' }}
 
 jobs:
   desktop:
@@ -178,6 +192,8 @@ jobs:
     name: Android (phones + tablets)
     runs-on: ubuntu-22.04
     timeout-minutes: 75
+    env:
+      HAS_PLAY: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON != '' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -198,7 +214,7 @@ jobs:
         run: |
           SDKM=$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager
           yes | $SDKM --licenses > /dev/null || true
-          $SDKM --install "build-tools;34.0.0" "platforms;android-34" > /dev/null
+          $SDKM --install "build-tools;34.0.0" "platforms;android-36" > /dev/null
           NDK=${ANDROID_NDK_LATEST_HOME:-}
           if [ -z "$NDK" ] || [ ! -d "$NDK" ]; then
             $SDKM --install "ndk;27.2.12479018" > /dev/null; NDK=$ANDROID_HOME/ndk/27.2.12479018
@@ -217,6 +233,11 @@ jobs:
           npx tauri android init --ci 2>&1 | tee $RUNNER_TEMP/android-build.log
           # app icons made by "tauri icon" (src-tauri/icons/android)
           cp -r src-tauri/icons/android/. src-tauri/gen/android/app/src/main/res/
+          # Google Play requires target API 36 (Android 16) for new apps and updates since 31 Aug 2026
+          G=src-tauri/gen/android/app/build.gradle.kts
+          sed -i -E 's/(compileSdk|targetSdk) *= *[0-9]+/\1 = 36/' $G
+          grep -E "compileSdk|targetSdk|minSdk" $G
+          grep -q "targetSdk = 36" $G || { echo "::error::Could not set targetSdk 36"; exit 1; }
 
       - name: Build APK and App Bundle
         run: |
@@ -277,6 +298,29 @@ jobs:
         with:
           tag_name: ${{ env.RELEASE_TAG }}
           files: out/*
+
+      - name: Google Play — check prerequisites
+        id: play
+        if: env.PLAY_TRACK != ''
+        run: |
+          if [ "$HAS_PLAY" != "true" ]; then
+            echo "::notice::Google Play upload skipped: add the PLAY_SERVICE_ACCOUNT_JSON secret (docs/GOOGLE_PLAY.md)."
+          elif [ "$SIGNING" != "release key" ]; then
+            echo "::warning::Google Play upload skipped: the bundle was signed with a throwaway key. Add the ANDROID_KEYSTORE_* upload-key secrets first — Play accepts only bundles signed with the registered upload key."
+          else
+            echo "upload=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Google Play — upload App Bundle (${{ env.PLAY_TRACK }} track, draft)
+        if: steps.play.outputs.upload == 'true'
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+          packageName: ${{ env.PLAY_PACKAGE_NAME }}
+          releaseFiles: out/*.aab
+          track: ${{ env.PLAY_TRACK }}
+          status: draft
+          releaseName: ${{ env.RELEASE_TAG || github.sha }}
 
   ios:
     name: iOS + iPadOS
