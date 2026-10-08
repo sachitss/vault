@@ -9,7 +9,8 @@
   "scripts": {
     "build": "python3 tools/build.py",
     "package": "python3 tools/package.py",
-    "test": "python3 tests/run_all.py"
+    "test": "python3 tests/run_all.py",
+    "tauri": "tauri"
   },
   "dependencies": {
     "exceljs": "4.4.0",
