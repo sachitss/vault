@@ -2,7 +2,7 @@
 import pathlib, subprocess, sys
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
-TESTS = ['e2e.py', 'imp.py', 'splash.py', 'test_pwa.py']
+TESTS = ['test_db.py', 'test_db_queries.py', 'e2e.py', 'test_importer.py', 'imp.py', 'splash.py', 'test_pwa.py']
 failed = []
 for t in TESTS:
     print(f'\n=== {t} ===', flush=True)

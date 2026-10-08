@@ -9,7 +9,8 @@ Evidence, valuations and insurance in one encrypted record per item — ready fo
 <a href="https://sachitss.github.io/vault/"><b>Web app (phone &amp; tablet)</b></a> ·
 <a href="docs/INSTALL.md">Installation guide</a> ·
 <a href="docs/USER_MANUAL.md">User manual</a> ·
-<a href="SECURITY.md">Security</a></p>
+<a href="SECURITY.md">Security</a> ·
+<a href="docs/DATABASE.md">Database design</a></p>
 
 ---
 
@@ -65,7 +66,7 @@ python3 tests/run_all.py                 # browser tests
 python3 tools/package.py                 # → dist/release/ (installers)
 ```
 
-See **[docs/DEVELOPMENT.md](docs/DEVELOPMENT.md)** for the project layout, releases and the web-app deployment.
+See **[docs/DEVELOPMENT.md](docs/DEVELOPMENT.md)** for the project layout, releases and the web-app deployment, and **[docs/DATABASE.md](docs/DATABASE.md)** for the relational database (SQLite/SQLCipher schema, ER diagrams, integrity rules, migration from app backups).
 
 ---
 

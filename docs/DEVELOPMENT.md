@@ -3,12 +3,13 @@
 ## Layout
 
 ```
+db/             relational schema (schema.sql), reference data, sample vault, reporting queries — see DATABASE.md
 src/            app source: core.js (crypto, storage, valuation, scoring, insurance), ui.js + views2.js (screens),
                 data.js (import/export, reports, backup, sample data, boot), app.css, splash.html, schema.json
 assets/         icon.svg, generated icons (assets/icons), brand logo
 samples/        sample PDFs embedded in the demo data
 templates/      Excel/CSV import templates and sample inventory
-tools/          build.py, package.py, make_icons.py, make_templates.py, make_sample_pdfs.py, requirements.txt
+tools/          build.py, package.py, vaultbak_to_sqlite.py, make_icons.py, make_templates.py, make_sample_pdfs.py, requirements.txt
 install/        windows/ (install.bat, install.ps1, uninstall.ps1), macos/ (*.command), linux/ (*.sh)
 tests/          Playwright browser tests (run_all.py runs them all)
 dist/           valuables-vault.html is committed (installers in the repo use it); dist/pwa and dist/release are build output
@@ -23,7 +24,7 @@ dist/           valuables-vault.html is committed (installers in the repo use it
 npm ci
 pip install -r tools/requirements.txt && python -m playwright install chromium
 python3 tools/build.py        # dist/valuables-vault.html + dist/pwa/
-python3 tests/run_all.py      # app end-to-end, import, splash, PWA offline
+python3 tests/run_all.py      # database schema + queries, app end-to-end, backup migration, import, splash, PWA offline
 python3 tools/package.py      # dist/release/ installers + SHA256SUMS.txt
 ```
 

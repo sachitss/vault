@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Relational database design for the native app: SQLite/SQLCipher schema with users and permissions, persons/owners, inventory items, categories, jewellery, gemstone and artwork details, purchase and valuation records, insurance policies, storage locations and bank lockers, documents, photographs, witnesses and verification records, beneficiaries, audit logs and backups (`db/`).
+- Integrity rules in the database (ownership shares, category values, masked confidential numbers, append-only hash-chained audit log, soft delete) and views for values, documentation score, policy coverage and locker contents.
+- `tools/vaultbak_to_sqlite.py`: migrates an app backup into the schema; database, query and migration tests in CI.
+
 ## 0.9.0 — 2026-10-08
 
 First release: a working prototype for all platforms.
