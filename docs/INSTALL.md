@@ -4,6 +4,8 @@ Valuables Vault runs on Windows, macOS, Linux, Android, iPhone and iPad. Desktop
 
 **Before you start:** each installation keeps its own encrypted vault. The vault password cannot be recovered — store it in a password manager or sealed with your estate papers.
 
+**Languages:** the app, its reports and exports are available in **English, Deutsch and नेपाली**. Choose the language on the first screen (or later on the lock screen or in *Settings*); it follows your device language until you choose. The Windows installer asks for English, German or Nepali.
+
 There are three ways to install. **Use the native app** where you can: it keeps the vault in the app's own storage, where no browser clean-up can delete it.
 
 | | Native app | Web app | Script installer / standalone file |
@@ -83,6 +85,15 @@ Open `ValuablesVault-<version>-Standalone.html` in Chrome, Edge, Firefox or Safa
 ## Updating
 
 Install the new version the same way, over the old one. Your data stays: it is kept in the app's storage (native app) or the browser profile (web app, script installer), not in the program folder. The web app updates itself the next time it is opened online. On Android, an update installs over the old version only if both were signed with the same release key — otherwise make a backup, uninstall, install, restore.
+
+## Automatic updates and reminders
+
+- **Windows, macOS, Linux:** the app checks for a new version about once a day. When one is available it shows what is new; *Install and restart* downloads it, verifies its signature and installs it. Your data stays. (Linux .deb/.rpm: you are asked for your administrator password.)
+- **Android:** apps from Google Play update through the store; the APK version shows a notice with a download link.
+- **iPhone/iPad and the web app:** the web app updates itself; the sideloaded app shows a notice.
+- Turn the check off in *Settings → Notifications & updates*. Only the version number is requested from GitHub — never any vault data.
+
+**Reminders** (insurance renewal, backup due, bank-locker review, outdated valuations, expiring documents) arrive as notifications — on phones and tablets also when the app is closed. Allow notifications when asked, or later in *Settings → Notifications & updates*. They never contain names or amounts.
 
 ## Moving data between devices
 

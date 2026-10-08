@@ -48,8 +48,7 @@ output is also weaker than a plain web app for document-heavy screens.
 
 ## Security model of the native shell
 
-- **No network.** The Content-Security-Policy (`src-tauri/tauri.conf.json`) allows only Tauri's
-  local IPC channel. Vault data is never sent anywhere.
+- **No data leaves the device.** The Content-Security-Policy (`src-tauri/tauri.conf.json`) allows only Tauri's local IPC channel and the GitHub Releases API (version check). Vault data is never sent anywhere.
 - **Deny by default.** `src-tauri/capabilities/` grants the window exactly: save/open/message
   dialogs, writing the file the user picked, opening links, and (phones/tablets) the QR scanner.
   No shell, no file reading by path, no HTTP.
@@ -58,6 +57,12 @@ output is also weaker than a plain web app for document-heavy screens.
   (Windows `%LOCALAPPDATA%\com.medtec24.valuablesvault`, macOS `~/Library/WebKit/com.medtec24.valuablesvault`,
   Linux `~/.local/share/com.medtec24.valuablesvault`, Android/iOS app sandbox).
 - **Single instance** on desktop, so two windows can never write the same vault at once.
+
+## Languages, updates and notifications
+
+- **Languages** — the web core is written in English; a translation layer (`src/i18n.js`) translates screens, dialogs, reports and exports into German and Nepali from dictionaries, with patterns for text containing numbers or names. One build contains all three languages.
+- **Updates** — desktop: Tauri updater with minisign signatures; the public key is compiled in, so only updates signed with the project's private key are installed. `latest.json` lives on the GitHub release. Mobile and the standalone file: a version check against the GitHub Releases API (allowed by the CSP as the only network destination) and a download notice.
+- **Notifications** — computed on the device from the unlocked vault; only dates and reminder kinds are stored outside the encrypted vault so they can fire while it is locked. Phones and tablets schedule them in the OS (tauri-plugin-notification).
 
 ## Honest limits
 

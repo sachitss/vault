@@ -2,6 +2,7 @@
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="referrer" content="no-referrer">
 <title>Privacy policy — Valuables Vault</title>
+<style>:root{--dev:"Noto Sans Devanagari","Nirmala UI","Kohinoor Devanagari"}[lang=ne]{font-family:system-ui,var(--dev),sans-serif}</style>
 <style>
 :root{--bg:#f5f3ef;--fg:#1d2433;--muted:#5d6577;--card:#fff;--line:#e2ddd3;--accent:#1f3a5f}
 @media (prefers-color-scheme:dark){:root{--bg:#121820;--fg:#e8ebf0;--muted:#a3abb9;--card:#1a222d;--line:#2c3644;--accent:#9fc1ec}}
@@ -14,7 +15,7 @@ table{border-collapse:collapse;width:100%}td,th{border-bottom:1px solid var(--li
 hr{border:0;border-top:1px solid var(--line);margin:36px 0}
 </style></head><body><main>
 <h1>Privacy policy</h1>
-<p class="muted">Valuables Vault · Android, iOS, Windows, macOS, Linux and web app · effective 8 October 2026</p>
+<p class="muted">Valuables Vault · Android, iOS, Windows, macOS, Linux and web app · effective 9 October 2026 (version 0.9.1)</p>
 
 <div class="card"><strong>In short:</strong> Valuables Vault does not collect, transmit or share any personal data.
 Everything you enter stays encrypted on your own device. We have no server, no accounts, no analytics, no advertising and no tracking.</div>
@@ -26,12 +27,21 @@ Everything you enter stays encrypted on your own device. We have no server, no a
 <p>The inventory you create — item descriptions, values, photos, documents, owners, witnesses, storage locations and bank-locker details — is stored only on the device where you enter it, encrypted with AES-256-GCM. The key is derived from your vault password (PBKDF2-SHA-256, 600,000 iterations); the password itself is never stored. Neither we nor anyone else can read your data, and it cannot be recovered without the password.</p>
 
 <h2>What the app sends over the internet</h2>
-<p>Nothing. The native apps' security policy blocks every network connection from the app's content. The web app downloads only the program files from GitHub Pages (hosted by GitHub, Inc.); GitHub may process your IP address as part of delivering the page, as described in <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement">GitHub's privacy statement</a>. Your vault data is never sent.</p>
+<p><strong>Your vault data is never sent.</strong> The only connections are to GitHub (GitHub, Inc.), which hosts the program:</p>
+<ul>
+<li><strong>Update check</strong> (can be switched off in <em>Settings → Notifications &amp; updates</em>): about once a day the app asks GitHub for the latest version number, and downloads a new version only when you agree. The request contains no vault data and no identifier — only what any web request contains, such as your IP address.</li>
+<li><strong>Web app:</strong> the program files are downloaded from GitHub Pages.</li>
+</ul>
+<p>GitHub may process your IP address as part of these requests, as described in <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement">GitHub's privacy statement</a>. Every other network connection is blocked by the app's security policy.</p>
+
+<h2>Reminder notifications</h2>
+<p>Reminders (insurance renewal, backup due, bank-locker review, outdated valuations, expiring documents) are worked out on your device. So that they can appear while the vault is locked or the app is closed, the app keeps only the <em>dates</em> and the <em>type</em> of the next reminders outside the encrypted vault (on phones and tablets, in the system's notification scheduler). Notifications never contain names, insurers, amounts or other details. You can switch them off in <em>Settings → Notifications &amp; updates</em> or in your device's settings.</p>
 
 <h2>Permissions</h2>
 <table>
 <tr><th>Permission</th><th>Why</th></tr>
 <tr><td>Camera</td><td>Only when you choose to photograph an item or scan a QR label. Images are encrypted and stored on your device; nothing is uploaded.</td></tr>
+<tr><td>Notifications</td><td>Only for the reminders described above and to tell you about a new version.</td></tr>
 <tr><td>Files / storage</td><td>Only when you choose to attach a document, import a spreadsheet, or save a backup, report or export to a location you pick.</td></tr>
 </table>
 
@@ -50,8 +60,15 @@ Everything you enter stays encrypted on your own device. We have no server, no a
 <hr>
 <h1 lang="de">Datenschutzerklärung (Kurzfassung)</h1>
 <div lang="de">
-<p>Valuables Vault erhebt, überträgt und teilt <strong>keine personenbezogenen Daten</strong>. Alle Eingaben (Gegenstände, Fotos, Dokumente, Schließfachangaben) werden ausschließlich verschlüsselt (AES-256-GCM) auf Ihrem Gerät gespeichert. Es gibt keinen Server, keine Konten, keine Analyse- oder Werbedienste. Kamera und Dateizugriff werden nur genutzt, wenn Sie selbst ein Foto aufnehmen, einen QR-Code scannen oder eine Datei auswählen bzw. speichern. Die Web-App wird über GitHub Pages ausgeliefert; dabei kann GitHub Ihre IP-Adresse verarbeiten.</p>
+<p>Valuables Vault erhebt, überträgt und teilt <strong>keine personenbezogenen Daten</strong>. Alle Eingaben (Gegenstände, Fotos, Dokumente, Schließfachangaben) werden ausschließlich verschlüsselt (AES-256-GCM) auf Ihrem Gerät gespeichert. Es gibt keinen Server, keine Konten, keine Analyse- oder Werbedienste. Die App fragt etwa einmal täglich bei GitHub nach der neuesten Versionsnummer (abschaltbar); dabei werden keine Tresordaten übertragen. Erinnerungen werden auf dem Gerät berechnet; außerhalb des verschlüsselten Tresors werden nur Datum und Art der nächsten Erinnerungen gespeichert, nie Namen oder Beträge. Kamera und Dateizugriff werden nur genutzt, wenn Sie selbst ein Foto aufnehmen, einen QR-Code scannen oder eine Datei auswählen bzw. speichern. Die Web-App wird über GitHub Pages ausgeliefert; dabei kann GitHub Ihre IP-Adresse verarbeiten.</p>
 <p>Verantwortlich: Ing.-Büro Sachit Shrestha · <a href="mailto:support@medtec24.com">support@medtec24.com</a></p>
+</div>
+<hr>
+<h1 lang="ne">गोपनीयता नीति (सारांश)</h1>
+<div lang="ne">
+<p>Valuables Vault ले <strong>कुनै व्यक्तिगत डाटा सङ्कलन, प्रसारण वा साझा गर्दैन</strong>। तपाईंले राख्नुभएका सबै विवरण (सामान, फोटो, कागजात, लकरका विवरण) तपाईंकै उपकरणमा इन्क्रिप्ट (AES-256-GCM) गरेर मात्र राखिन्छन्। कुनै सर्भर, खाता, विश्लेषण वा विज्ञापन सेवा छैन।</p>
+<p>एपले दिनको लगभग एक पटक GitHub सँग नयाँ संस्करण नम्बर मात्र सोध्छ (सेटिङबाट बन्द गर्न सकिन्छ); भल्टको कुनै डाटा पठाइँदैन। सम्झना सूचनाहरू उपकरणमै तयार हुन्छन्; इन्क्रिप्ट गरिएको भल्ट बाहिर अर्को सम्झनाको मिति र प्रकार मात्र राखिन्छ — नाम वा रकम कहिल्यै होइन। क्यामेरा र फाइल पहुँच तपाईं आफैंले फोटो खिच्दा, QR स्क्यान गर्दा वा फाइल रोज्दा/सेभ गर्दा मात्र प्रयोग हुन्छ। वेब एप GitHub Pages बाट आउँछ; त्यसक्रममा GitHub ले तपाईंको IP ठेगाना प्रयोग गर्न सक्छ।</p>
+<p>जिम्मेवार: Ing.-Büro Sachit Shrestha · <a href="mailto:support@medtec24.com">support@medtec24.com</a></p>
 </div>
 <p class="muted" style="margin-top:32px"><a href="./">← Valuables Vault</a></p>
 </main></body></html>

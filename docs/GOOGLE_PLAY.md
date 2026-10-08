@@ -67,6 +67,65 @@ Also available for Windows, macOS, Linux, iPhone/iPad (web app) and every modern
 Powered by Ing.-Büro Sachit Shrestha · support@medtec24.com
 ```
 
+### German listing (Deutsch — add under *Store presence → Translations → de-DE*)
+
+**App name:** `Valuables Vault` · **Short description** (80): `Verschlüsseltes Offline-Inventar für Schmuck, Gold, Kunst, Tresor und Schließfach.`
+
+```
+Valuables Vault dokumentiert alles, was Ihnen wertvoll ist — Gold, Schmuck, Diamanten, Uhren, Münzen, Kunst, wichtige Dokumente und den Inhalt Ihres Tresors zu Hause oder Bankschließfachs — in einem verschlüsselten Datensatz pro Gegenstand.
+
+NACHWEISE FÜR DEN VERSICHERUNGSFALL
+• Fotos, Rechnungen, Zertifikate und Gutachten zu jedem Gegenstand, mit Datum und Prüfsumme
+• Kaufpreis, Marktwert, Wiederbeschaffungs- und Versicherungswert getrennt, mit Bewertungsverlauf
+• Versicherungsprüfung: vergleicht Ihre Gegenstände mit Versicherungssumme und Entschädigungsgrenzen (Wertsachen, außerhalb des Tresors, Bankschließfach) und zeigt Lücken
+• Dokumentationsgrad: auf einen Blick, was für einen Schadensfall noch fehlt
+
+TRESOR UND BANKSCHLIESSFACH
+• Aufbewahrungsorte und Schließfächer mit verdeckten Schließfachnummern
+• Druckbare Schließfach-Inventarliste mit Unterschriftszeilen; Prüfungen mit Zeugen und Unterschrift auf dem Bildschirm
+• QR-Etiketten nur mit der Inventarnummer — keine Werte, keine persönlichen Daten
+
+FAMILIE UND NACHLASS
+• Eigentümer, Miteigentümer und Begünstigte je Gegenstand; Nachlass- und Prüfberichte
+
+PRIVAT VON GRUND AUF
+• Alles verschlüsselt auf Ihrem Gerät (AES-256). Kein Konto, kein Server, kein Tracking, keine Werbung
+• Funktioniert vollständig offline; Erinnerungen an Verlängerungen, Sicherungen und Prüfungen
+• Verschlüsselte Sicherungen, die Sie selbst aufbewahren; Import/Export mit Excel und CSV
+• Deutsch, Englisch und Nepali
+
+Bereitgestellt von Ing.-Büro Sachit Shrestha · support@medtec24.com
+```
+
+### Nepali listing (नेपाली — add under *Translations → ne-NP*)
+
+**App name:** `Valuables Vault` · **Short description:** `गहना, सुन, कलाकृति, तिजोरी र बैंक लकरका सामानको इन्क्रिप्ट गरिएको अफलाइन सूची।`
+
+```
+Valuables Vault ले तपाईंका बहुमूल्य सामान — सुन, गहना, हिरा, घडी, सिक्का, कलाकृति, महत्त्वपूर्ण कागजात र घरको तिजोरी वा बैंक लकरमा राखिएका सामान — प्रत्येकको इन्क्रिप्ट गरिएको अभिलेख राख्छ।
+
+बीमा दाबीका लागि प्रमाण
+• हरेक सामानसँग फोटो, बिल, प्रमाणपत्र र मूल्याङ्कन प्रतिवेदन, मिति सहित
+• खरिद, बजार, प्रतिस्थापन र बीमा मूल्य छुट्टाछुट्टै, मूल्याङ्कन इतिहास सहित
+• बीमा जाँच: तपाईंका सामानलाई बीमा रकम र सीमासँग तुलना गरी कमी देखाउँछ
+
+तिजोरी र बैंक लकर
+• राख्ने स्थान र लकर, लकर नम्बर लुकाइएको
+• छाप्न मिल्ने लकर सूची, साक्षी सहितको प्रमाणीकरण
+• QR लेबलमा सूची नम्बर मात्र — मूल्य वा व्यक्तिगत विवरण छैन
+
+परिवार र अंशबन्डा
+• हरेक सामानको मालिक, संयुक्त मालिक र हकदार; अंशबन्डा प्रतिवेदन
+
+पूर्ण गोपनीयता
+• सबै डाटा तपाईंकै उपकरणमा इन्क्रिप्ट (AES-256)। कुनै खाता, सर्भर, ट्र्याकिङ वा विज्ञापन छैन
+• पूर्ण रूपमा अफलाइन; नवीकरण, ब्याकअप र जाँचको सम्झना
+• आफैंले राख्ने इन्क्रिप्ट गरिएको ब्याकअप; Excel र CSV आयात/निर्यात
+• नेपाली, अङ्ग्रेजी र जर्मन भाषामा
+
+Ing.-Büro Sachit Shrestha द्वारा · support@medtec24.com
+```
+
 **Category:** Finance · **Tags:** Finance, Productivity · **Contact e-mail:** support@medtec24.com · **Website:** https://github.com/sachitss/vault
 
 **Graphics needed:** app icon 512 × 512 (`assets/icons/icon-512.png`), feature graphic 1024 × 500, at least 2 phone screenshots, plus 7" and 10" tablet screenshots for the tablet listing.
@@ -81,7 +140,7 @@ Powered by Ing.-Büro Sachit Shrestha · support@medtec24.com
 | Content rating (IARC questionnaire) | Category *Utility, Productivity, Communication or Other*; no violence, sexual content, gambling, user-generated content sharing or user communication → expected rating *Everyone / PEGI 3* |
 | Target audience | 18 and over |
 | News app | No |
-| Data safety | **No data collected, no data shared.** The app processes data only on the device and transmits nothing. Encryption in transit: not applicable (no transmission). Users can delete data in the app (*Settings → Erase vault*) |
+| Data safety | **No data collected, no data shared.** (The daily update check asks GitHub only for the latest version number and sends no user data; the app also requests the notification permission for reminders.) The app processes data only on the device and transmits nothing. Encryption in transit: not applicable (no transmission). Users can delete data in the app (*Settings → Erase vault*) |
 | Government app | No |
 | Financial features | None of the listed features (the app records values; it does not provide banking, payments, loans or trading) |
 | Health | No |

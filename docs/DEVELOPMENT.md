@@ -61,6 +61,10 @@ npx tauri android init && npx tauri android build --apk   # needs Android SDK + 
 
 Rules for the web code so it keeps working natively: save files through `download()` / `Platform.save()` (never `<a download>` alone on mobile), open reports with `openReport()`, and do not add network requests — the native CSP blocks them. New native features need a permission in `src-tauri/capabilities/`; grant the narrowest one.
 
+**Languages:** texts are written in English in the source; `src/i18n.js` translates what is shown using `src/i18n/de.json` and `src/i18n/ne.json` (English text → translation; `{0}` marks a variable part). After changing texts run `python3 tools/i18n_harvest.py` — it walks the whole app and lists what is missing in `tests/out/i18n-missing-<lang>.json`. Add those entries, rebuild, and `tests/test_i18n.py` checks the rest. The Windows installer's Nepali strings are in `src-tauri/nsis/`.
+
+**Automatic updates:** desktop builds are signed with the updater key (repository secrets `TAURI_SIGNING_PRIVATE_KEY` and `TAURI_SIGNING_PRIVATE_KEY_PASSWORD`; the public key is in `tauri.conf.json → plugins.updater`). When a release is published, the *Native apps* workflow attaches the installers, their signatures go into `latest.json` (`tools/updater_manifest.py`), and installed apps find it at `releases/latest/download/latest.json`. Raise `version` in `package.json` for every release — the updater only offers higher versions. **Never lose the private key:** without it, installed apps cannot be updated automatically any more.
+
 Signing secrets and what happens without them are listed at the top of `.github/workflows/native.yml`. Google Play publishing (developer account, upload key, service account, store listing): **[GOOGLE_PLAY.md](GOOGLE_PLAY.md)**. For an Apple Developer *organisation* account, enrol with the D-U-N-S number `317353353`.
 
 ## Script installers

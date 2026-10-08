@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.9.1 — 2026-10-09
+
+- **Languages: English, Deutsch, नेपाली.** Choose on first start, on the lock screen or in Settings (follows the device language by default). Screens, messages, reports, Excel/CSV exports and the Windows installer are translated; amounts use the language's number format (Nepali with lakh grouping); Nepali text uses an embedded Noto Sans Devanagari font so it displays on every device. Imports accept column names in all three languages.
+- **Automatic updates.** Windows, macOS and Linux apps check GitHub Releases about once a day, show what is new and install signed, verified updates with one click (the AppImage, .deb, .rpm, .exe/.msi and macOS app). Phones, tablets and the standalone file show a notice with a download link; Android installs from Google Play update through the store. Can be switched off in Settings.
+- **Reminder notifications** for insurance renewals, backups, bank-locker reviews, outdated valuations and expiring documents — scheduled by the system on phones and tablets (also when the app is closed), shown at start on computers and in the browser. Notifications never show names, insurers or amounts.
+- New *Notifications & updates* card in Settings; privacy policy updated (update check, reminders; Nepali summary).
+- iOS: camera and photo-library usage texts; Android targets API 36.
+
 ## 0.9.0 — 2026-10-08
 
 First release: a working prototype for all platforms.
