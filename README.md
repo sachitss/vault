@@ -24,7 +24,7 @@ Evidence, valuations and insurance in one encrypted record per item — ready fo
 | **macOS 10.15+** (Apple silicon + Intel) | `Valuables-Vault_<version>_universal.dmg` | Open, drag **Valuables Vault** to *Applications*; first start: right-click → **Open**. |
 | **Linux** | `.deb` (Ubuntu, Debian, Mint), `.rpm` (Fedora, openSUSE) or `.AppImage` (any) | `sudo apt install ./Valuables-Vault_<version>_amd64.deb` · or make the AppImage executable and run it. |
 | **Android phones & tablets** (8.0+) | `Valuables-Vault_<version>_android-universal.apk` | Open the file on the device, allow *Install unknown apps* once. |
-| **iPhone / iPad** | — | Open **https://sachitss.github.io/vault/** in Safari → Share → **Add to Home Screen**. (Native iOS app once Apple signing is set up.) |
+| **iPhone / iPad** | — or `Valuables-Vault_<version>_ios-unsigned.ipa` | Simplest: **https://sachitss.github.io/vault/** in Safari → Share → **Add to Home Screen**. Native app: sign the `.ipa` with your Apple ID using Sideloadly ([guide](docs/INSTALL.md#iphone-and-ipad--native-app-sideloading)). App Store once Apple signing is set up. |
 | **Any browser** (Chrome, Edge, Firefox, Safari) | — | **https://sachitss.github.io/vault/** — works offline, can be installed as an app. |
 | **No installation / USB stick** | `ValuablesVault-<version>-Standalone.html` | Open the file in a browser. Script-based installers for Windows/macOS/Linux are also attached. |
 

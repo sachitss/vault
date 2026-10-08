@@ -15,7 +15,7 @@ First release: a working prototype for all platforms.
 - Documentation completeness score and dashboard alerts.
 - Audit log, recycle bin, encrypted and verified backup / restore.
 - Animated vault splash screen; Powered-by branding.
-- **Native apps** from the same code base (Tauri 2): Windows `.msi` / setup `.exe`, macOS universal `.dmg`, Linux `.deb` / `.rpm` / `.AppImage`, Android `.apk` / `.aab` for phones and tablets; iOS/iPadOS build ready for Apple signing. Vault kept in private app storage, native save dialogs, in-app report viewer with print, camera QR scanning on mobile, single instance on desktop. See `docs/ARCHITECTURE.md`.
+- **Native apps** from the same code base (Tauri 2): Windows `.msi` / setup `.exe`, macOS universal `.dmg`, Linux `.deb` / `.rpm` / `.AppImage`, Android `.apk` / `.aab` for phones and tablets (target API 36); iOS/iPadOS unsigned `.ipa` for sideloading, App Store build ready for Apple signing. Vault kept in private app storage, native save dialogs, in-app report viewer with print, camera QR scanning on mobile, single instance on desktop. See `docs/ARCHITECTURE.md`.
 - Installable web app (PWA) for Chrome, Edge, Firefox and Safari, including iPhone and iPad, with offline start.
 - Script installers for Windows, macOS and Linux (own browser app window, per user) and a standalone single-file version.
 - Relational database design for the native app: SQLite/SQLCipher schema with users and permissions, persons/owners, inventory items, categories, jewellery, gemstone and artwork details, purchase and valuation records, insurance policies, storage locations and bank lockers, documents, photographs, witnesses and verification records, beneficiaries, audit logs and backups (`db/`).

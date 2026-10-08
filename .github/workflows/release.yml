@@ -43,6 +43,7 @@ jobs:
           | macOS 10.15+ | `Valuables-Vault_*_universal.dmg` | Drag to Applications; first start: right-click > Open |
           | Linux | `.deb`, `.rpm` or `.AppImage` | `sudo apt install ./Valuables-Vault_*_amd64.deb` |
           | Android 8+ (phones, tablets) | `Valuables-Vault_*_android-universal.apk` | Open on the device, allow *Install unknown apps* |
+          | iPhone, iPad (native) | `Valuables-Vault_*_ios-unsigned.ipa` | Sign with your Apple ID using Sideloadly or AltStore (see INSTALL.md) |
           | iPhone, iPad, any browser | — | https://sachitss.github.io/vault/ > *Add to Home Screen* / *Install app* |
           | Alternative (desktop) | `ValuablesVault-*-Windows.zip` / `-macOS.zip` / `-Linux.tar.gz` | Script installers: `install.bat` / `install.command` / `install.sh` |
           | No installation | `ValuablesVault-*-Standalone.html` | Open in Chrome, Edge, Firefox or Safari |

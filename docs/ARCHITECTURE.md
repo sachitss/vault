@@ -14,7 +14,7 @@ get native installers from a thin **Tauri 2** shell around the same core.
                                                                             ├─ macOS    universal .dmg
                                                                             ├─ Linux    .deb / .rpm / .AppImage
                                                                             ├─ Android  .apk / .aab (phones, tablets)
-                                                                            └─ iOS      .ipa (iPhone, iPad; needs Apple signing)
+                                                                            └─ iOS      .ipa (iPhone, iPad; sideload now, App Store with Apple signing)
 ```
 
 `src/platform.js` is the only place that knows where the app runs. In a browser it does
@@ -63,7 +63,7 @@ output is also weaker than a plain web app for document-heavy screens.
 
 | Topic | Status |
 |---|---|
-| iOS / iPadOS native app | Apple only installs signed apps. The CI job builds the `.ipa` once Apple Developer secrets are added; until then iPhone and iPad use the installable web app. |
+| iOS / iPadOS native app | Apple only installs signed apps. CI builds an unsigned `.ipa` that users sign with their own Apple ID (Sideloadly/AltStore; free IDs re-sign every 7 days), and an App Store/TestFlight build once Apple Developer secrets are added. The web app remains the simplest option on iPhone and iPad. |
 | Windows SmartScreen / macOS Gatekeeper | Builds are unsigned until code-signing certificates are added as secrets (the workflow already supports them). Users see a one-time warning (see INSTALL.md). |
 | Android signing | Without the `ANDROID_KEYSTORE_*` secrets each build is signed with a throwaway key; it installs, but cannot update an earlier install in place. Create one release key and keep it safe. |
 | Android save dialog | Uses the system document picker; tested in CI build only, not on a physical device here. |

@@ -10,7 +10,7 @@ There are three ways to install. **Use the native app** where you can: it keeps 
 |---|---|---|---|
 | Windows, macOS, Linux | ✅ recommended | ✅ | ✅ (opens in a browser app window) |
 | Android phones & tablets | ✅ recommended | ✅ | — |
-| iPhone & iPad | after Apple signing | ✅ recommended | — |
+| iPhone & iPad | ✅ via sideloading (see below); App Store after Apple signing | ✅ simplest | — |
 | Data stored in | app storage | browser storage | browser storage |
 
 ## Windows 10 / 11 — native app
@@ -45,13 +45,24 @@ Start it from the application menu or with `valuables-vault`.
 
 Android 8.0 or later. The `.aab` file in the release is for publishing in Google Play, not for direct installation.
 
-## iPhone and iPad — web app
+## iPhone and iPad — web app (simplest)
 
 1. Open **https://sachitss.github.io/vault/** in **Safari**.
 2. Tap **Share** → **Add to Home Screen** → **Add**.
 3. Open **Vault** from the home screen. After the first start it works offline.
 
-iOS may delete website data of home-screen apps that have not been opened for several weeks if the device runs low on storage. Open the app regularly and **keep encrypted backups** (Backup → Create & verify backup → save to Files / iCloud Drive). A native iOS app follows once the project has an Apple Developer account (Apple installs only signed apps).
+iOS may delete website data of home-screen apps that have not been opened for several weeks if the device runs low on storage. Open the app regularly and **keep encrypted backups** (Backup → Create & verify backup → save to Files / iCloud Drive).
+
+## iPhone and iPad — native app (sideloading)
+
+Apple installs apps only from the App Store, TestFlight, or signed with your own Apple ID. Until Valuables Vault is in the App Store, the release contains `Valuables-Vault_<version>_ios-unsigned.ipa`, which you sign with your own Apple ID on a computer:
+
+1. Install **[Sideloadly](https://sideloadly.io)** (Windows or Mac) — or AltStore.
+2. Connect the iPhone/iPad by cable and trust the computer.
+3. Drag the `.ipa` into Sideloadly, enter your Apple ID, click **Start**. (Use an app-specific password if your Apple ID has two-factor authentication.)
+4. On the device: *Settings → General → VPN & Device Management* → your Apple ID → **Trust**. On iOS 16+ also enable *Settings → Privacy & Security → Developer Mode* (restart required).
+
+With a free Apple ID the app must be re-signed **every 7 days** (Sideloadly can do this automatically over Wi-Fi); your vault data stays when you re-sign. With a paid Apple Developer account it lasts a year. iOS 14 or later, iPhone and iPad.
 
 ## Any browser — web app
 
@@ -90,7 +101,7 @@ Automatic desktop ↔ phone sync through storage you host (NAS, WebDAV or your c
 | Native app — Windows | *Settings → Apps → Valuables Vault → Uninstall* |
 | Native app — macOS | Drag *Valuables Vault* from *Applications* to the Bin |
 | Native app — Linux | `sudo apt remove valuables-vault` / `sudo dnf remove valuables-vault` / delete the AppImage |
-| Native app — Android | Long-press the icon → *Uninstall* (this **deletes the vault on the device** — back up first) |
+| Native app — Android, iPhone, iPad | Long-press the icon → *Uninstall* / *Remove App* (this **deletes the vault on the device** — back up first) |
 | Script installer — Windows | *Settings → Apps → Valuables Vault → Uninstall*, or run `uninstall.ps1` in `%LOCALAPPDATA%\Programs\ValuablesVault` |
 | Script installer — macOS | Run `uninstall.command` from the download, or drag `~/Applications/Valuables Vault.app` to the Bin |
 | Script installer — Linux | `~/ValuablesVault/uninstall.sh` (your backup files in that folder are kept) |
