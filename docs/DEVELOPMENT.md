@@ -34,8 +34,8 @@ Regenerate assets only when their sources change: `python3 tools/make_icons.py` 
 ## Releasing
 
 1. Set `"version"` in `package.json`, add a section to `CHANGELOG.md`, run the build and commit.
-2. `git tag v0.9.1 && git push origin v0.9.1`
-3. The *Release* workflow builds, tests, packages and publishes the GitHub Release with all installers and `SHA256SUMS.txt`.
+2. Either `git tag v0.9.1 && git push origin v0.9.1`, or on GitHub: *Releases → Draft a new release*, new tag `v0.9.1`, *Publish*.
+3. The *Release* workflow builds, tests, packages and attaches all installers and `SHA256SUMS.txt` to that release (a few minutes).
 
 ## Web app (GitHub Pages)
 

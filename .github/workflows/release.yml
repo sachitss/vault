@@ -1,10 +1,14 @@
 name: Release
 
-# Push a tag like v0.9.0 (matching "version" in package.json) to publish
-# the installers as a GitHub Release.
+# Publishes the installers to a GitHub Release. Either push a tag like v0.9.0
+# (matching "version" in package.json) or create the release on GitHub
+# (Releases > Draft a new release > tag v0.9.0 > Publish); the workflow then
+# builds, tests and attaches all downloads.
 on:
   push:
     tags: ['v*']
+  release:
+    types: [published]
 
 permissions:
   contents: write
@@ -46,5 +50,8 @@ jobs:
 
       - uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ github.ref_name }}
+          name: Valuables Vault ${{ github.ref_name }}
           body_path: notes.md
           files: dist/release/*
+          fail_on_unmatched_files: true
