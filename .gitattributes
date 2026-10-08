@@ -1,0 +1,11 @@
+* text=auto
+*.ps1 text eol=crlf
+*.bat text eol=crlf
+*.sh text eol=lf
+*.command text eol=lf
+*.png binary
+*.ico binary
+*.icns binary
+*.pdf binary
+*.xlsx binary
+dist/valuables-vault.html -text -diff linguist-generated

@@ -1,0 +1,5 @@
+# Build, template and test tooling (the app itself has no Python dependency)
+playwright==1.56.0
+pillow==12.3.0
+openpyxl==3.1.5
+reportlab==5.0.1

@@ -1,0 +1,15 @@
+node_modules/
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db
+
+# build output (dist/valuables-vault.html IS committed - the installers in the repo use it)
+dist/*
+!dist/valuables-vault.html
+
+# test output
+tests/out/
+
+# never commit personal vault data
+*.vaultbak

@@ -1,0 +1,60 @@
+<div id="splash" role="status" aria-live="polite" aria-label="Loading Valuables Vault">
+<style>
+#splash{position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;background:radial-gradient(ellipse at 50% 40%,#22385a 0%,#16263d 55%,#0d1726 100%);color:#e8ebf0;font:14px/1.4 "Segoe UI",system-ui,-apple-system,Arial,sans-serif;transition:opacity .5s ease,visibility .5s}
+#splash.out{opacity:0;visibility:hidden}
+#splash svg.vault{width:168px;height:168px;filter:drop-shadow(0 10px 28px rgba(0,0,0,.45))}
+#splash .t{font-size:22px;font-weight:600;letter-spacing:.01em;color:#fff}
+#splash .s{font-size:12.5px;color:#aeb8c8;min-height:18px}
+#splash .s::after{content:"";animation:sp-dots 1.4s steps(4) infinite}
+#splash .pb{position:absolute;right:18px;bottom:16px;display:flex;align-items:center;gap:10px;background:#fff;border-radius:10px;padding:6px 10px;color:#4a5263;font-size:11px;line-height:1.4}
+#splash .pb img{height:40px;width:auto;display:block}
+#splash .pb b{color:#1d2330}
+.sp-dial{transform-origin:100px 100px;animation:sp-dial 3.2s cubic-bezier(.65,0,.35,1) infinite}
+.sp-ring{stroke-dasharray:440;stroke-dashoffset:440;transform-origin:100px 100px;transform:rotate(-90deg);animation:sp-ring 3.2s ease-in-out infinite}
+.sp-bolt{animation:sp-bolt 3.2s ease-in-out infinite}
+.sp-glow{animation:sp-glow 3.2s ease-in-out infinite}
+.sp-shine{animation:sp-shine 3.2s ease-in-out infinite}
+@keyframes sp-dial{0%{transform:rotate(0)}22%{transform:rotate(220deg)}44%{transform:rotate(80deg)}66%{transform:rotate(300deg)}82%,100%{transform:rotate(360deg)}}
+@keyframes sp-ring{0%{stroke-dashoffset:440}80%,100%{stroke-dashoffset:0}}
+@keyframes sp-bolt{0%,70%{transform:translate(0,0)}82%,100%{transform:translate(var(--bx),var(--by))}}
+@keyframes sp-glow{0%,72%{opacity:0}85%{opacity:.9}100%{opacity:0}}
+@keyframes sp-shine{0%,100%{opacity:.08}50%{opacity:.22}}
+@keyframes sp-dots{0%{content:""}25%{content:"."}50%{content:".."}75%{content:"..."}}
+@media (prefers-reduced-motion:reduce){.sp-dial,.sp-ring,.sp-bolt,.sp-glow,.sp-shine,#splash .s::after{animation:none}.sp-ring{stroke-dashoffset:0}}
+@media (max-width:520px){#splash .pb{position:static;margin-top:28px}}
+</style>
+<svg class="vault" viewBox="0 0 200 200" aria-hidden="true">
+ <defs>
+  <linearGradient id="spBody" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2c4a74"/><stop offset="1" stop-color="#1a2e4b"/></linearGradient>
+  <linearGradient id="spGold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f0cf86"/><stop offset=".55" stop-color="#d4a75a"/><stop offset="1" stop-color="#a8782b"/></linearGradient>
+  <radialGradient id="spDoor" cx=".45" cy=".4" r=".7"><stop offset="0" stop-color="#34557f"/><stop offset="1" stop-color="#1c3150"/></radialGradient>
+ </defs>
+ <rect x="14" y="18" width="172" height="164" rx="20" fill="url(#spBody)" stroke="url(#spGold)" stroke-width="4"/>
+ <rect class="sp-shine" x="22" y="26" width="156" height="40" rx="14" fill="#fff"/>
+ <rect x="8" y="50" width="10" height="26" rx="4" fill="url(#spGold)"/>
+ <rect x="8" y="124" width="10" height="26" rx="4" fill="url(#spGold)"/>
+ <rect x="62" y="180" width="18" height="10" rx="3" fill="#0f1b2d"/><rect x="120" y="180" width="18" height="10" rx="3" fill="#0f1b2d"/>
+ <circle cx="100" cy="100" r="66" fill="url(#spDoor)" stroke="#0f1b2d" stroke-width="3"/>
+ <circle class="sp-glow" cx="100" cy="100" r="74" fill="none" stroke="#f0cf86" stroke-width="6" opacity="0"/>
+ <circle class="sp-ring" cx="100" cy="100" r="70" fill="none" stroke="url(#spGold)" stroke-width="4" stroke-linecap="round"/>
+ <g fill="url(#spGold)">
+  <rect class="sp-bolt" style="--bx:0;--by:-8px" x="94" y="38" width="12" height="14" rx="3"/>
+  <rect class="sp-bolt" style="--bx:0;--by:8px" x="94" y="148" width="12" height="14" rx="3"/>
+  <rect class="sp-bolt" style="--bx:-8px;--by:0" x="38" y="94" width="14" height="12" rx="3"/>
+  <rect class="sp-bolt" style="--bx:8px;--by:0" x="148" y="94" width="14" height="12" rx="3"/>
+ </g>
+ <g class="sp-dial">
+  <circle cx="100" cy="100" r="34" fill="#16263d" stroke="url(#spGold)" stroke-width="4"/>
+  <g stroke="#d4a75a" stroke-width="2" opacity=".7">
+   <line x1="100" y1="70" x2="100" y2="76"/><line x1="130" y1="100" x2="124" y2="100"/><line x1="100" y1="130" x2="100" y2="124"/><line x1="70" y1="100" x2="76" y2="100"/>
+   <line x1="121" y1="79" x2="117" y2="83"/><line x1="121" y1="121" x2="117" y2="117"/><line x1="79" y1="121" x2="83" y2="117"/><line x1="79" y1="79" x2="83" y2="83"/>
+  </g>
+  <g stroke="url(#spGold)" stroke-width="6" stroke-linecap="round"><line x1="100" y1="100" x2="100" y2="80"/><line x1="100" y1="100" x2="117" y2="110"/><line x1="100" y1="100" x2="83" y2="110"/></g>
+  <circle cx="100" cy="100" r="9" fill="url(#spGold)"/><circle cx="100" cy="72" r="3" fill="#f0cf86"/>
+ </g>
+</svg>
+<div class="t">Valuables Vault</div>
+<div class="s" id="splash-msg">Loading secure vault</div>
+<div class="pb"><img src="__LOGO__" alt="Team Nepal Solutions"><span>Powered by<br><b>© Ing.-Büro Sachit Shrestha</b><br>support@medtec24.com</span></div>
+</div>
+<script>window.__SPLASH_T0=Date.now();</script>

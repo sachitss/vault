@@ -1,0 +1,143 @@
+{
+  "version": 1,
+  "categories": {
+    "JWL": {"name": "Jewellery", "groups": ["metal", "gem", "dims"], "certExpected": true},
+    "GLD": {"name": "Gold & Precious Metals", "groups": ["metal", "dims"], "certExpected": true},
+    "DIA": {"name": "Diamonds & Gemstones", "groups": ["gem"], "certExpected": true},
+    "WAT": {"name": "Watches", "groups": ["watch", "metal"], "certExpected": true},
+    "COI": {"name": "Coins & Medals", "groups": ["coin", "metal"], "certExpected": true},
+    "ART": {"name": "Artwork & Paintings", "groups": ["art", "dims"], "certExpected": true},
+    "ANT": {"name": "Antiques & Collectibles", "groups": ["antique", "dims"], "certExpected": false},
+    "ELE": {"name": "Electronics", "groups": ["elec", "dims"], "certExpected": false},
+    "DOC": {"name": "Documents & Certificates", "groups": ["docu"], "certExpected": false},
+    "OTH": {"name": "Other Valuables", "groups": ["dims"], "certExpected": false}
+  },
+  "groups": {
+    "metal": {"title": "Metal & Gold", "fields": [
+      {"k": "metalType", "label": "Metal type", "type": "select", "options": ["Gold", "Silver", "Platinum", "Palladium", "Steel", "Titanium", "Mixed", "Other"]},
+      {"k": "goldColour", "label": "Gold type / colour", "type": "select", "options": ["", "Yellow", "White", "Rose", "Two-tone", "Fine (bullion)"]},
+      {"k": "purity", "label": "Purity (‰ fineness)", "type": "number", "hint": "e.g. 999, 916, 750, 585, 375"},
+      {"k": "karat", "label": "Karat", "type": "text", "hint": "auto-filled from purity"},
+      {"k": "grossWeight", "label": "Gross weight (g)", "type": "number"},
+      {"k": "netMetalWeight", "label": "Net metal weight (g)", "type": "number"},
+      {"k": "hallmark", "label": "Hallmark / stamp", "type": "text"},
+      {"k": "assayCert", "label": "Assay certificate no.", "type": "text"},
+      {"k": "metalPricePurchase", "label": "Metal price at purchase (per g)", "type": "number"},
+      {"k": "metalPriceCurrent", "label": "Current metal price (per g)", "type": "number"},
+      {"k": "metalPriceDate", "label": "Metal price date", "type": "date"}
+    ]},
+    "gem": {"title": "Diamond / Gemstone", "fields": [
+      {"k": "gemType", "label": "Gemstone type", "type": "select", "options": ["", "Diamond", "Ruby", "Sapphire", "Emerald", "Pearl", "Other"]},
+      {"k": "gemCount", "label": "Number of stones", "type": "number"},
+      {"k": "carat", "label": "Carat (total)", "type": "number"},
+      {"k": "shape", "label": "Shape", "type": "select", "options": ["", "Round", "Princess", "Oval", "Cushion", "Emerald", "Pear", "Marquise", "Radiant", "Asscher", "Heart", "Other"]},
+      {"k": "cut", "label": "Cut grade", "type": "select", "options": ["", "Excellent", "Very Good", "Good", "Fair", "Poor"]},
+      {"k": "colour", "label": "Colour", "type": "text", "hint": "e.g. D–Z"},
+      {"k": "clarity", "label": "Clarity", "type": "select", "options": ["", "FL", "IF", "VVS1", "VVS2", "VS1", "VS2", "SI1", "SI2", "I1", "I2", "I3"]},
+      {"k": "fluorescence", "label": "Fluorescence", "type": "select", "options": ["", "None", "Faint", "Medium", "Strong", "Very Strong"]},
+      {"k": "certAuthority", "label": "Certification authority", "type": "select", "options": ["", "GIA", "IGI", "HRD", "AGS", "DSEF", "Other"]},
+      {"k": "certNumber", "label": "Certificate number", "type": "text"},
+      {"k": "laserInscription", "label": "Laser inscription", "type": "text"},
+      {"k": "gemDimensions", "label": "Stone dimensions (mm)", "type": "text"}
+    ]},
+    "watch": {"title": "Watch", "fields": [
+      {"k": "reference", "label": "Reference no.", "type": "text"},
+      {"k": "caseNumber", "label": "Case / movement no.", "type": "text"},
+      {"k": "boxPapers", "label": "Box & papers", "type": "select", "options": ["", "Box and papers", "Papers only", "Box only", "None"]},
+      {"k": "lastService", "label": "Last service", "type": "date"},
+      {"k": "certNumber", "label": "Warranty / certificate no.", "type": "text"}
+    ]},
+    "coin": {"title": "Coin / Medal", "fields": [
+      {"k": "issuingCountry", "label": "Issuing country", "type": "text"},
+      {"k": "year", "label": "Year", "type": "number"},
+      {"k": "denomination", "label": "Denomination", "type": "text"},
+      {"k": "quantity", "label": "Quantity", "type": "number"},
+      {"k": "mintMark", "label": "Mint mark", "type": "text"},
+      {"k": "grade", "label": "Grade", "type": "text", "hint": "e.g. MS-70, PF, BU"},
+      {"k": "gradingService", "label": "Grading service", "type": "select", "options": ["", "PCGS", "NGC", "ANACS", "None", "Other"]},
+      {"k": "certNumber", "label": "Certificate / slab no.", "type": "text"}
+    ]},
+    "art": {"title": "Artwork", "fields": [
+      {"k": "artist", "label": "Artist", "type": "text"},
+      {"k": "title", "label": "Title of work", "type": "text"},
+      {"k": "creationYear", "label": "Creation year", "type": "text"},
+      {"k": "medium", "label": "Medium", "type": "text", "hint": "e.g. oil on canvas"},
+      {"k": "signature", "label": "Signature", "type": "select", "options": ["", "Signed front", "Signed back", "Signed front and back", "Monogram", "Unsigned"]},
+      {"k": "edition", "label": "Edition no.", "type": "text"},
+      {"k": "certNumber", "label": "Authenticity certificate no.", "type": "text"},
+      {"k": "gallery", "label": "Gallery / dealer", "type": "text"},
+      {"k": "previousOwner", "label": "Previous owner", "type": "text"},
+      {"k": "provenance", "label": "Provenance", "type": "textarea"},
+      {"k": "restoration", "label": "Restoration history", "type": "textarea"}
+    ]},
+    "antique": {"title": "Antique / Collectible", "fields": [
+      {"k": "period", "label": "Period / era", "type": "text"},
+      {"k": "origin", "label": "Origin", "type": "text"},
+      {"k": "maker", "label": "Maker", "type": "text"},
+      {"k": "condition", "label": "Condition", "type": "select", "options": ["", "Mint", "Excellent", "Good", "Fair", "Poor"]},
+      {"k": "certNumber", "label": "Expertise / certificate no.", "type": "text"},
+      {"k": "provenance", "label": "Provenance", "type": "textarea"},
+      {"k": "restoration", "label": "Restoration history", "type": "textarea"}
+    ]},
+    "elec": {"title": "Electronics", "fields": [
+      {"k": "imei", "label": "IMEI / secondary ID", "type": "text", "sensitive": true},
+      {"k": "warrantyUntil", "label": "Warranty until", "type": "date"}
+    ]},
+    "docu": {"title": "Document", "fields": [
+      {"k": "docType", "label": "Document type", "type": "select", "options": ["", "Title deed", "Share / bond certificate", "Will", "Contract", "Birth / marriage certificate", "Passport", "Other"]},
+      {"k": "issuer", "label": "Issuer", "type": "text"},
+      {"k": "issueDate", "label": "Issue date", "type": "date"},
+      {"k": "docNumber", "label": "Document number", "type": "text", "sensitive": true},
+      {"k": "expiry", "label": "Expiry", "type": "date"}
+    ]},
+    "dims": {"title": "Dimensions", "fields": [
+      {"k": "material", "label": "Material", "type": "text"},
+      {"k": "length", "label": "Length (mm)", "type": "number"},
+      {"k": "width", "label": "Width (mm)", "type": "number"},
+      {"k": "height", "label": "Height (mm)", "type": "number"},
+      {"k": "weight", "label": "Weight (g)", "type": "number"}
+    ]}
+  },
+  "valuationTypes": ["Purchase", "Market", "Replacement", "Insurance", "Appraised", "Estimated"],
+  "acquisition": ["Purchased", "Inherited", "Gift", "Family property", "Other"],
+  "ownershipTypes": ["Sole", "Joint", "Family", "Trust / estate", "Other"],
+  "locationTypes": ["Home", "Home safe", "Office safe", "Bank locker", "Family member", "Other secure location"],
+  "verificationTypes": ["Inventory witnessed", "Ownership verified", "Photograph verified", "Valuation verified", "Locker inspection witnessed"],
+  "docTypes": ["Purchase invoice", "Receipt", "Bank statement", "Certificate", "Appraisal", "Insurance document", "Warranty", "Ownership document", "Authenticity certificate", "Import/export documentation", "Restoration documentation", "Other evidence"],
+  "photoViews": ["Front", "Rear", "Side", "Detail", "Serial number", "Hallmark", "Certificate", "Packaging", "Storage location", "Other"],
+  "currencies": ["EUR", "USD", "GBP", "CHF", "NPR", "INR", "AED", "JPY", "AUD", "CAD", "CNY", "SGD", "HKD", "SEK", "NOK", "DKK", "PLN", "CZK"],
+  "basicColumns": [
+    {"k": "id", "label": "Inventory ID"},
+    {"k": "name", "label": "Item name", "required": true},
+    {"k": "cat", "label": "Category code", "required": true, "hint": "JWL, GLD, DIA, WAT, COI, ART, ANT, ELE, DOC, OTH"},
+    {"k": "subcat", "label": "Subcategory"},
+    {"k": "description", "label": "Description"},
+    {"k": "brand", "label": "Brand"},
+    {"k": "manufacturer", "label": "Manufacturer"},
+    {"k": "model", "label": "Model"},
+    {"k": "serial", "label": "Serial number"},
+    {"k": "idNumber", "label": "Identification number"},
+    {"k": "acquiredDate", "label": "Date acquired", "type": "date"},
+    {"k": "purchaseDate", "label": "Purchase date", "type": "date"},
+    {"k": "purchaseLocation", "label": "Purchase location"},
+    {"k": "seller", "label": "Seller / dealer"},
+    {"k": "purchaseCountry", "label": "Country of purchase"},
+    {"k": "invoiceNo", "label": "Invoice number"},
+    {"k": "purchasePrice", "label": "Purchase price", "type": "number"},
+    {"k": "currency", "label": "Currency"},
+    {"k": "owner", "label": "Owner"},
+    {"k": "coOwners", "label": "Co-owners (; separated)"},
+    {"k": "beneficiaries", "label": "Beneficiaries (; separated)"},
+    {"k": "ownershipPct", "label": "Ownership %", "type": "number"},
+    {"k": "ownershipType", "label": "Ownership type"},
+    {"k": "acquisition", "label": "Acquisition method"},
+    {"k": "location", "label": "Storage location"},
+    {"k": "policy", "label": "Insurance policy (insurer)"},
+    {"k": "currentValue", "label": "Current estimated value", "type": "number"},
+    {"k": "currentValueDate", "label": "Current value date", "type": "date"},
+    {"k": "currentValueSource", "label": "Current value source"},
+    {"k": "insuranceValue", "label": "Insurance value", "type": "number"},
+    {"k": "insuranceValueDate", "label": "Insurance value date", "type": "date"},
+    {"k": "notes", "label": "Notes"}
+  ]
+}

@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+
+      - name: Build
+        run: python tools/build.py
+
+      - name: Committed dist/valuables-vault.html is up to date
+        run: |
+          git diff --exit-code --stat dist/valuables-vault.html || {
+            echo "::error::dist/valuables-vault.html differs from a fresh build. Run 'npm ci && python3 tools/build.py' and commit it."; exit 1; }
+
+      - name: Browser tests (app, import, splash, PWA offline)
+        run: python tests/run_all.py
+
+      - name: Check installer scripts
+        shell: bash
+        run: |
+          for f in install/linux/*.sh install/macos/*.command; do bash -n "$f"; done
+          pwsh -NoProfile -Command '
+            $bad = 0
+            foreach ($f in Get-ChildItem install/windows/*.ps1) {
+              $e = $null; [void][System.Management.Automation.Language.Parser]::ParseFile($f.FullName, [ref]$null, [ref]$e)
+              if ($e) { $e | ForEach-Object { Write-Host "::error file=$($f.Name)::$($_.Message)" }; $bad++ }
+            }
+            exit $bad'
+          HOME="$RUNNER_TEMP/home" VV_NO_LAUNCH=1 bash install/linux/install.sh
+          HOME="$RUNNER_TEMP/home" VV_YES=1 bash "$RUNNER_TEMP/home/ValuablesVault/uninstall.sh"
+
+      - name: Package
+        run: python tools/package.py
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: valuables-vault-packages
+          path: dist/release/
+          retention-days: 30
+
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: test-screenshots
+          path: tests/out/
+          retention-days: 7

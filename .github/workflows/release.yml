@@ -1,0 +1,50 @@
+name: Release
+
+# Push a tag like v0.9.0 (matching "version" in package.json) to publish
+# the installers as a GitHub Release.
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+
+      - name: Tag matches package.json version
+        run: |
+          V=$(node -p "require('./package.json').version")
+          [ "v$V" = "$GITHUB_REF_NAME" ] || { echo "::error::Tag $GITHUB_REF_NAME does not match package.json version $V"; exit 1; }
+
+      - run: python tools/build.py
+      - run: python tests/run_all.py
+      - run: python tools/package.py
+
+      - name: Release notes from CHANGELOG.md
+        run: |
+          V=${GITHUB_REF_NAME#v}
+          awk -v v="$V" '/^## /{p = index($0, v) > 0} p' CHANGELOG.md > notes.md
+          cat >> notes.md <<'MD'
+
+          ### Downloads
+          | Platform | File | How to install |
+          |---|---|---|
+          | Windows 10/11 | `ValuablesVault-*-Windows.zip` | Extract, double-click `install.bat` |
+          | macOS 10.13+ | `ValuablesVault-*-macOS.zip` | Unzip, right-click `install.command` > Open |
+          | Linux | `ValuablesVault-*-Linux.tar.gz` | Extract, run `./install.sh` |
+          | Android, iPhone, iPad | — | Open https://sachitss.github.io/vault/ and choose *Install app* / *Add to Home Screen* |
+          | Any (manual / USB stick) | `ValuablesVault-*-Standalone.html` | Open in Chrome, Edge, Firefox or Safari |
+
+          Verify downloads with `SHA256SUMS.txt`. Powered by © Ing.-Büro Sachit Shrestha · support@medtec24.com
+          MD
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          body_path: notes.md
+          files: dist/release/*

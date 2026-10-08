@@ -1,0 +1,19 @@
+{
+  "name": "valuables-vault",
+  "version": "0.9.0",
+  "private": true,
+  "description": "Secure, offline-first inventory for valuables, safes and bank lockers. Powered by Ing.-Büro Sachit Shrestha.",
+  "author": "Ing.-Büro Sachit Shrestha <support@medtec24.com>",
+  "license": "UNLICENSED",
+  "homepage": "https://github.com/sachitss/vault",
+  "scripts": {
+    "build": "python3 tools/build.py",
+    "package": "python3 tools/package.py",
+    "test": "python3 tests/run_all.py"
+  },
+  "dependencies": {
+    "exceljs": "4.4.0",
+    "qrcode-generator": "2.0.4",
+    "xlsx": "0.18.5"
+  }
+}

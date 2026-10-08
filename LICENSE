@@ -1,0 +1,23 @@
+Copyright (c) 2026 Ing.-Büro Sachit Shrestha. All rights reserved.
+
+This software and its source code are proprietary. The source is published for
+transparency and review. No licence is granted to copy, modify, distribute,
+sublicense or sell the software, in whole or in part, without the prior written
+permission of the copyright holder.
+
+You may download and use the released application for your own personal,
+non-commercial inventory purposes.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE COPYRIGHT
+HOLDER BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, INCLUDING LOSS OF
+DATA, ARISING FROM THE USE OF THE SOFTWARE. Values and reports produced by the
+software are not valuations, insurance advice or legal documents.
+
+Third-party components bundled in the application keep their own licences:
+- SheetJS Community Edition (xlsx) — Apache License 2.0
+- ExcelJS — MIT License
+- qrcode-generator — MIT License
+
+Contact: support@medtec24.com

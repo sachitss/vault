@@ -1,0 +1,19 @@
+name: Set up build tools
+description: Node + Python + Chromium for building and testing Valuables Vault
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 20
+        cache: npm
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+        cache: pip
+        cache-dependency-path: tools/requirements.txt
+    - shell: bash
+      run: |
+        npm ci --no-audit --no-fund
+        pip install -r tools/requirements.txt
+        python -m playwright install --with-deps chromium
