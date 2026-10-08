@@ -16,7 +16,7 @@ import base64, hashlib, json, pathlib, shutil, sys
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 SRC, ASSETS, DIST = ROOT / 'src', ROOT / 'assets', ROOT / 'dist'
 NM = ROOT / 'node_modules'
-APP_FILES = ['core.js', 'ui.js', 'views2.js', 'data.js']
+APP_FILES = ['platform.js', 'core.js', 'ui.js', 'views2.js', 'data.js']
 LIBS = ['xlsx/dist/xlsx.full.min.js', 'exceljs/dist/exceljs.min.js', 'qrcode-generator/dist/qrcode.js']
 
 CSP_STANDALONE = ("default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval'; style-src 'unsafe-inline'; "
@@ -31,7 +31,9 @@ def b64(p): return base64.b64encode(pathlib.Path(p).read_bytes()).decode()
 def safe(js): return js.replace('</script', '<\\/script')
 
 
-def page(version: str, pwa: bool) -> str:
+def page(version: str, mode: str) -> str:
+    """mode: 'standalone' (single file), 'pwa' (installable web app) or 'native' (Tauri shell)."""
+    pwa = mode == 'pwa'
     missing = [l for l in LIBS if not (NM / l).exists()]
     if missing:
         sys.exit(f'Missing libraries {missing} — run "npm ci" first.')
@@ -62,7 +64,7 @@ def page(version: str, pwa: bool) -> str:
     splash = read(SRC / 'splash.html').replace('__LOGO__', logo)
     return (f'''<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta http-equiv="Content-Security-Policy" content="{CSP_PWA if pwa else CSP_STANDALONE}">
+{'' if mode == 'native' else f'<meta http-equiv="Content-Security-Policy" content="{CSP_PWA if pwa else CSP_STANDALONE}">'}
 <meta name="referrer" content="no-referrer"><meta name="theme-color" content="#16263d">
 <meta name="application-name" content="Valuables Vault"><meta name="author" content="Ing.-Büro Sachit Shrestha">
 <meta name="generator" content="Valuables Vault {version}">
@@ -116,10 +118,13 @@ self.addEventListener('fetch', e => {{
 def main():
     version = json.loads(read(ROOT / 'package.json'))['version']
     DIST.mkdir(exist_ok=True)
-    standalone = page(version, pwa=False)
+    standalone = page(version, 'standalone')
     (DIST / 'valuables-vault.html').write_text(standalone, encoding='utf-8')
-    build_pwa(version, page(version, pwa=True))
-    print(f'Valuables Vault {version}: dist/valuables-vault.html ({len(standalone) // 1024} KB), dist/pwa/')
+    build_pwa(version, page(version, 'pwa'))
+    app = DIST / 'app'                       # frontend for the Tauri shell (CSP is set in src-tauri/tauri.conf.json)
+    app.mkdir(exist_ok=True)
+    (app / 'index.html').write_text(page(version, 'native'), encoding='utf-8')
+    print(f'Valuables Vault {version}: dist/valuables-vault.html ({len(standalone) // 1024} KB), dist/pwa/, dist/app/')
 
 
 if __name__ == '__main__':

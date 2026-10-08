@@ -68,7 +68,7 @@ function renderSetup() {
       <div class="err" id="su-err"></div>
       <button class="btn pri" type="submit">Create encrypted vault</button>
     </form>
-    <p class="small muted" style="margin-top:14px">Data stays on this device (browser storage, AES-256-GCM, PBKDF2 ${PBKDF2_ITER.toLocaleString()} iterations). Nothing is sent to any server.</p>
+    <p class="small muted" style="margin-top:14px">Data stays on this device (${NATIVE ? 'private app storage' : 'browser storage'}, AES-256-GCM, PBKDF2 ${PBKDF2_ITER.toLocaleString()} iterations). Nothing is sent to any server.</p>
   </div></div><div class="lock-brand">${BRAND_HTML}</div>`;
   const pw = $('#su-pw'); pw.oninput = () => { const s = pwStrength(pw.value); const c = ['#b23a3a', '#b23a3a', '#c9822b', '#c9a22b', '#2f7d4f', '#2f7d4f'][s]; $('#su-str').style.cssText = `width:${s * 20}%;background:${c}`; };
   $('#setup').onsubmit = async e => {

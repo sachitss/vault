@@ -153,3 +153,7 @@ dialog::backdrop{background:rgba(12,18,28,.55)}
 
 label.row{flex-wrap:nowrap;align-items:flex-start}
 label.row .chk,label.row input[type=radio]{flex:none;margin-top:2px}
+
+/* native report viewer */
+dialog.report-viewer{max-width:min(1100px,98vw);width:100%;height:92vh}
+dialog.report-viewer .dlg-h{gap:10px}

@@ -221,13 +221,17 @@ VIEWS.settings = () => {
     <label class="f">Backup reminder after (days)<input type="number" name="backupReminderDays" value="${st.backupReminderDays}"></label></div></fieldset>
   <div style="grid-column:1/-1" class="row"><button class="btn pri" type="submit">Save settings</button></div></form>
   <div class="grid g2" style="margin-top:14px">
-   <div class="card"><h3>Storage & synchronisation</h3><dl class="kv"><dt>Data location</dt><dd>This browser on this device (IndexedDB), encrypted</dd><dt>Cloud sync</dt><dd><span class="pill">Off</span> — not available in the prototype; planned as opt-in, end-to-end encrypted</dd>
+   <div class="card"><h3>Storage & synchronisation</h3><dl class="kv"><dt>Data location</dt><dd>${NATIVE ? `Private app storage of Valuables Vault on this ${Platform.mobile ? 'device' : 'computer'} (${Platform.name}), encrypted` : 'This browser on this device (IndexedDB), encrypted'}</dd><dt>Cloud sync</dt><dd><span class="pill">Off</span> — not available in the prototype; planned as opt-in, end-to-end encrypted</dd>
      <dt>Records</dt><dd>${S.items.length} items · ${S.files.length} files · ${S.audit.length} audit entries</dd><dt>Persistent storage</dt><dd id="persist">checking…</dd><dt>Version</dt><dd>${APP_VERSION}</dd></dl></div>
    <div class="card"><h3>Data</h3><div class="grid"><button class="btn" data-act="load-sample">Load sample data</button><button class="btn" data-act="remove-sample">Remove sample data</button><button class="btn danger" data-act="wipe">Erase vault on this device…</button></div>
    <p class="small muted">Erasing removes all encrypted data from this browser. Make sure you have a verified backup first.</p></div></div>`;
 };
 AFTER.settings = () => {
+  if (NATIVE) { const e = $('#persist'); if (e) e.innerHTML = '<span class="pill ok">app storage — not cleared by browsers</span>'; return bindSettingsForm(); }
   navigator.storage?.persisted?.().then(p => { const e = $('#persist'); if (e) e.innerHTML = p ? '<span class="pill ok">granted</span>' : '<span class="pill warn">not granted</span> <button class="btn sm" data-act="persist">Request</button>'; });
+  bindSettingsForm();
+};
+function bindSettingsForm() {
   $('#setf').onsubmit = e => {
     e.preventDefault(); const o = formObj(e.target); const st = S.settings;
     const fxo = { [o.baseCurrency]: 1 }; for (const [k, v] of Object.entries(o.fx || {})) if (v !== '' && !isNaN(+v) && +v > 0) fxo[k] = +v;

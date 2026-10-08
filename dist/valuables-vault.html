@@ -161,6 +161,10 @@ dialog::backdrop{background:rgba(12,18,28,.55)}
 
 label.row{flex-wrap:nowrap;align-items:flex-start}
 label.row .chk,label.row input[type=radio]{flex:none;margin-top:2px}
+
+/* native report viewer */
+dialog.report-viewer{max-width:min(1100px,98vw);width:100%;height:92vh}
+dialog.report-viewer .dlg-h{gap:10px}
 </style></head><body>
 <div id="splash" role="status" aria-live="polite" aria-label="Loading Valuables Vault">
 <style>
@@ -2591,7 +2595,126 @@ var qrcode = function() {
     return qrcode;
 }));
 </script>
-<script>'use strict';
+<script>/* =====================================================================
+   Valuables Vault — platform adapter
+   One code base for browsers and the native apps (Tauri shell on Windows,
+   macOS, Linux, Android, iOS). In a browser nothing here changes behaviour;
+   inside the native shell it routes file saving, printing, external links
+   and QR scanning to the operating system.
+   ===================================================================== */
+const TAURI = window.__TAURI__ || null;
+const NATIVE = !!TAURI;
+const NATIVE_MOBILE = NATIVE && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+const PLATFORM_NAME = !NATIVE ? 'browser' : NATIVE_MOBILE ? (/Android/i.test(navigator.userAgent) ? 'android' : 'ios')
+  : /Windows/i.test(navigator.userAgent) ? 'windows' : /Mac/i.test(navigator.userAgent) ? 'macos' : 'linux';
+
+const Platform = {
+  native: NATIVE, mobile: NATIVE_MOBILE, name: PLATFORM_NAME,
+
+  /** Save bytes/text under a file name. Native: OS save dialog. Browser: download. Returns false if cancelled. */
+  async save(name, data, mime = 'application/octet-stream') {
+    if (!NATIVE) return browserDownload(name, data, mime);
+    const ext = (name.split('.').pop() || '').toLowerCase();
+    const path = await TAURI.dialog.save({ defaultPath: name, filters: ext ? [{ name: ext.toUpperCase() + ' file', extensions: [ext] }] : [] });
+    if (!path) return false;
+    const bytes = data instanceof Blob ? new Uint8Array(await data.arrayBuffer())
+      : data instanceof Uint8Array ? data : new TextEncoder().encode(String(data));
+    await TAURI.fs.writeFile(path, bytes);
+    if (typeof toast === 'function') toast(`Saved ${name}`);
+    return true;
+  },
+
+  /** Open a URL (mailto:, https:) outside the app. */
+  async openExternal(url) {
+    if (NATIVE) return TAURI.opener.openUrl(url);
+    window.open(url, '_blank', 'noopener');
+  },
+
+  /** Print the current document (desktop). The report overlay calls this while only the report is visible. */
+  async print() {
+    if (NATIVE && !NATIVE_MOBILE) {
+      try { await TAURI.core.invoke('print_page'); return true; } catch (e) { /* fall back */ }
+    }
+    if (NATIVE_MOBILE) return false;
+    window.print(); return true;
+  },
+
+  canPrint() { return !NATIVE_MOBILE; },
+
+  /** Scan a QR code with the camera (phones/tablets). Returns the text or null. */
+  async scanQR() {
+    const bs = TAURI && TAURI.barcodeScanner;
+    if (!bs) return null;
+    try {
+      let perm = await bs.checkPermissions();
+      if (perm !== 'granted') perm = await bs.requestPermissions();
+      if (perm !== 'granted') throw new Error('Camera permission was not granted.');
+      const r = await bs.scan({ windowed: false, formats: ['QR_CODE'] });
+      return r && r.content ? r.content : null;
+    } catch (e) { if (typeof toast === 'function') toast('Scan cancelled: ' + (e.message || e)); return null; }
+  },
+  hasCameraScan() { return !!(TAURI && TAURI.barcodeScanner); },
+};
+
+function browserDownload(name, data, mime) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(data instanceof Blob ? data : new Blob([data], { type: mime }));
+  a.download = name; document.body.appendChild(a); a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+  return true;
+}
+
+/* In the native shell, links leave the app through the OS, and <a download> links become save dialogs. */
+if (NATIVE) {
+  document.addEventListener('click', async e => {
+    const a = e.target.closest && e.target.closest('a[href]');
+    if (!a) return;
+    const href = a.getAttribute('href');
+    if (a.hasAttribute('download') && href && href.startsWith('blob:')) {
+      e.preventDefault();
+      const blob = await fetch(href).then(r => r.blob());
+      await Platform.save(a.getAttribute('download') || 'file', blob, blob.type);
+    } else if (/^(mailto:|tel:|https?:)/i.test(href)) {
+      e.preventDefault();
+      Platform.openExternal(href);
+    }
+  }, true);
+}
+
+/* Report viewer for the native shell: the report is shown in-app, then printed or saved. */
+function showReportInApp(title, html) {
+  const d = document.createElement('dialog');
+  d.className = 'report-viewer';
+  d.innerHTML = `<div class="dlg-h"><h2 style="margin:0">${esc(title)}</h2><div class="row">
+      ${Platform.canPrint() ? '<button class="btn pri" data-print>Print / Save as PDF</button>' : ''}
+      <button class="btn" data-save>Save as HTML</button><button class="btn ghost" data-close aria-label="Close">✕</button></div></div>
+    <iframe title="${esc(title)}" sandbox="allow-same-origin allow-modals" style="width:100%;height:calc(100% - 64px);border:0;background:#fff"></iframe>`;
+  document.body.appendChild(d); d.showModal();
+  const fr = d.querySelector('iframe'); fr.srcdoc = html;
+  d.addEventListener('click', e => { if (e.target.closest('[data-close]')) d.close(); });
+  d.addEventListener('close', () => { clearPrint(); d.remove(); });
+  d.querySelector('[data-save]').onclick = () => Platform.save(title.replace(/[^\w.-]+/g, '-').toLowerCase() + '.html', html, 'text/html');
+  const pb = d.querySelector('[data-print]');
+  if (pb) pb.onclick = () => printHTML(html);
+}
+
+/** Print a self-contained HTML report: only #print-root is visible to the printer.
+    It stays in the page (hidden on screen) until the viewer closes, because some
+    print dialogs render their preview after print() has already returned. */
+function clearPrint() { document.getElementById('print-root')?.remove(); document.getElementById('print-style')?.remove(); }
+function printHTML(html) {
+  clearPrint();
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  const root = document.createElement('div'); root.id = 'print-root';
+  const style = document.createElement('style'); style.id = 'print-style';
+  style.textContent = [...doc.querySelectorAll('style')].map(s => s.textContent).join('\n')
+    + '\n@media screen{#print-root{display:none}}@media print{body>*:not(#print-root){display:none!important}#print-root{display:block}}';
+  root.innerHTML = doc.body.innerHTML;
+  root.querySelectorAll('.noprint').forEach(n => n.remove());
+  document.head.appendChild(style); document.body.appendChild(root);
+  Platform.print();
+}
+'use strict';
 /* =====================================================================
    Valuables Vault — core: crypto, storage, data model, computations
    All inventory data is encrypted with AES-256-GCM before it touches disk.
@@ -3037,7 +3160,7 @@ function renderSetup() {
       <div class="err" id="su-err"></div>
       <button class="btn pri" type="submit">Create encrypted vault</button>
     </form>
-    <p class="small muted" style="margin-top:14px">Data stays on this device (browser storage, AES-256-GCM, PBKDF2 ${PBKDF2_ITER.toLocaleString()} iterations). Nothing is sent to any server.</p>
+    <p class="small muted" style="margin-top:14px">Data stays on this device (${NATIVE ? 'private app storage' : 'browser storage'}, AES-256-GCM, PBKDF2 ${PBKDF2_ITER.toLocaleString()} iterations). Nothing is sent to any server.</p>
   </div></div><div class="lock-brand">${BRAND_HTML}</div>`;
   const pw = $('#su-pw'); pw.oninput = () => { const s = pwStrength(pw.value); const c = ['#b23a3a', '#b23a3a', '#c9822b', '#c9a22b', '#2f7d4f', '#2f7d4f'][s]; $('#su-str').style.cssText = `width:${s * 20}%;background:${c}`; };
   $('#setup').onsubmit = async e => {
@@ -3745,13 +3868,17 @@ VIEWS.settings = () => {
     <label class="f">Backup reminder after (days)<input type="number" name="backupReminderDays" value="${st.backupReminderDays}"></label></div></fieldset>
   <div style="grid-column:1/-1" class="row"><button class="btn pri" type="submit">Save settings</button></div></form>
   <div class="grid g2" style="margin-top:14px">
-   <div class="card"><h3>Storage & synchronisation</h3><dl class="kv"><dt>Data location</dt><dd>This browser on this device (IndexedDB), encrypted</dd><dt>Cloud sync</dt><dd><span class="pill">Off</span> — not available in the prototype; planned as opt-in, end-to-end encrypted</dd>
+   <div class="card"><h3>Storage & synchronisation</h3><dl class="kv"><dt>Data location</dt><dd>${NATIVE ? `Private app storage of Valuables Vault on this ${Platform.mobile ? 'device' : 'computer'} (${Platform.name}), encrypted` : 'This browser on this device (IndexedDB), encrypted'}</dd><dt>Cloud sync</dt><dd><span class="pill">Off</span> — not available in the prototype; planned as opt-in, end-to-end encrypted</dd>
      <dt>Records</dt><dd>${S.items.length} items · ${S.files.length} files · ${S.audit.length} audit entries</dd><dt>Persistent storage</dt><dd id="persist">checking…</dd><dt>Version</dt><dd>${APP_VERSION}</dd></dl></div>
    <div class="card"><h3>Data</h3><div class="grid"><button class="btn" data-act="load-sample">Load sample data</button><button class="btn" data-act="remove-sample">Remove sample data</button><button class="btn danger" data-act="wipe">Erase vault on this device…</button></div>
    <p class="small muted">Erasing removes all encrypted data from this browser. Make sure you have a verified backup first.</p></div></div>`;
 };
 AFTER.settings = () => {
+  if (NATIVE) { const e = $('#persist'); if (e) e.innerHTML = '<span class="pill ok">app storage — not cleared by browsers</span>'; return bindSettingsForm(); }
   navigator.storage?.persisted?.().then(p => { const e = $('#persist'); if (e) e.innerHTML = p ? '<span class="pill ok">granted</span>' : '<span class="pill warn">not granted</span> <button class="btn sm" data-act="persist">Request</button>'; });
+  bindSettingsForm();
+};
+function bindSettingsForm() {
   $('#setf').onsubmit = e => {
     e.preventDefault(); const o = formObj(e.target); const st = S.settings;
     const fxo = { [o.baseCurrency]: 1 }; for (const [k, v] of Object.entries(o.fx || {})) if (v !== '' && !isNaN(+v) && +v > 0) fxo[k] = +v;
@@ -3789,7 +3916,7 @@ function toCSV(rows, delim) {
   const heads = Object.keys(rows[0]); const q = v => { v = v == null ? '' : String(v); return /[";,\n\r]/.test(v) || v.includes(delim) ? `"${v.replace(/"/g, '""')}"` : v; };
   return '﻿' + [heads.map(q).join(delim), ...rows.map(r => heads.map(h => q(r[h])).join(delim))].join('\r\n');
 }
-function download(name, data, mime) { const a = document.createElement('a'); a.href = URL.createObjectURL(data instanceof Blob ? data : new Blob([data], { type: mime })); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500); }
+function download(name, data, mime) { return Platform.save(name, data, mime); }
 const stamp = () => new Date().toISOString().slice(0, 16).replace(/[:T]/g, '-');
 
 /* ---------- Import / Export view ---------- */
@@ -4019,14 +4146,17 @@ const REP_CSS = `body{font:11pt/1.4 "Segoe UI",Arial,sans-serif;color:#1d2330;ma
   @media print{.noprint{display:none}main{padding:0}@page{margin:14mm 12mm 16mm}}.noprint{position:sticky;top:0;background:#1f3a5f;color:#fff;padding:8px 16px;display:flex;gap:10px;align-items:center}.noprint button{padding:5px 12px;cursor:pointer}
   .rbrand{display:flex;justify-content:flex-end;align-items:center;gap:4mm;margin-top:8mm;padding-top:3mm;border-top:1px solid #e4e0d8;page-break-inside:avoid}.rbrand img{height:14mm;width:auto}.rbrand div{font-size:8.5pt;color:#555;text-align:right;line-height:1.4}.rbrand b{color:#1d2330}.rbrand a{color:#1f3a5f}`;
 let REPWIN = null;
-function openReport(title, body) {
-  const w = REPWIN && !REPWIN.closed ? REPWIN : window.open('', '_blank'); REPWIN = null; if (!w) return toast('Allow pop-ups to open the report.');
-  w.document.open();
-  w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>${esc(title)}</title><style>${REP_CSS}</style></head><body><div class="noprint"><b>${esc(title)}</b><span style="flex:1"></span><button onclick="print()">Print / Save as PDF</button><button onclick="close()">Close</button></div><main>
+function reportHTML(title, body, toolbar) {
+  return `<!doctype html><html><head><meta charset="utf-8"><title>${esc(title)}</title><style>${REP_CSS}</style></head><body>${toolbar ? `<div class="noprint"><b>${esc(title)}</b><span style="flex:1"></span><button onclick="print()">Print / Save as PDF</button><button onclick="close()">Close</button></div>` : ''}<main>
     <h1>${esc(title)}</h1><div class="meta">${esc(S.settings.userName)} · created ${fmtTs(nowISO())} · base currency ${S.settings.baseCurrency} · <span class="conf">CONFIDENTIAL</span></div>${body}
     <p class="note">Generated by Valuables Vault ${APP_VERSION}. Values as recorded by the owner; market value and insurance / replacement value differ. This report is not a valuation or legal document.</p>
-    <div class="rbrand">${BRAND_LOGO ? `<img src="${BRAND_LOGO}" alt="Team Nepal Solutions">` : ''}<div>Powered by<br><b>© Ing.-Büro Sachit Shrestha</b><br><a href="mailto:support@medtec24.com">support@medtec24.com</a></div></div></main></body></html>`);
-  w.document.close(); audit('Report created', 'report', title, '', ''); saveSoon();
+    <div class="rbrand">${BRAND_LOGO ? `<img src="${BRAND_LOGO}" alt="Team Nepal Solutions">` : ''}<div>Powered by<br><b>© Ing.-Büro Sachit Shrestha</b><br><a href="mailto:support@medtec24.com">support@medtec24.com</a></div></div></main></body></html>`;
+}
+function openReport(title, body) {
+  audit('Report created', 'report', title, '', ''); saveSoon();
+  if (NATIVE) return showReportInApp(title, reportHTML(title, body, false));
+  const w = REPWIN && !REPWIN.closed ? REPWIN : window.open('', '_blank'); REPWIN = null; if (!w) return toast('Allow pop-ups to open the report.');
+  w.document.open(); w.document.write(reportHTML(title, body, true)); w.document.close();
 }
 function itemKV(it, conf) {
   const v = itemVals(it); const d = it.details || {}; const gs = SCHEMA.categories[it.cat]?.groups || [];
@@ -4038,8 +4168,10 @@ function itemKV(it, conf) {
   return `<div class="kv">${rows.filter(r => r[1] && r[1] !== '—').map(r => `<b>${esc(r[0])}</b><span>${esc(r[1])}</span>`).join('')}</div>`;
 }
 async function buildReport(kind, items, f) {
-  REPWIN = window.open('', '_blank'); // open synchronously inside the click so pop-up blockers allow it
-  if (REPWIN) REPWIN.document.write('<p style="font:14px sans-serif;padding:20px">Preparing report…</p>');
+  if (!NATIVE) { // open synchronously inside the click so pop-up blockers allow it
+    REPWIN = window.open('', '_blank');
+    if (REPWIN) REPWIN.document.write('<p style="font:14px sans-serif;padding:20px">Preparing report…</p>');
+  }
   const conf = !!f.conf, base = S.settings.baseCurrency;
   if (kind === 'inventory' || kind === 'selected') {
     let body = summaryTable(items);
@@ -4133,7 +4265,9 @@ async function createBackup(pw, pwmode) {
   const name = `valuables-backup-${stamp()}.vaultbak`;
   S.backups.push({ ts: nowISO(), file: name, items: S.items.length, files: Object.keys(blobs).length, size: bytes.length, sha256: await sha256hex(bytes), verified, pwmode });
   audit('Backup performed', 'backup', name, '', verified ? 'verified' : 'verification FAILED');
-  await saveNow(); download(name, new Blob([bytes], { type: 'application/octet-stream' }));
+  const saved = await download(name, new Blob([bytes], { type: 'application/octet-stream' }));
+  if (saved === false) { S.backups.pop(); S.audit.pop(); await saveNow(); toast('Backup cancelled — nothing was saved.'); return; }
+  await saveNow();
   toast(verified ? 'Backup created and verified. Store it somewhere safe.' : 'Backup created but verification failed!'); rerender();
 }
 async function readBackup(text, pw) {
@@ -4178,6 +4312,11 @@ async function verifyBackupFile() {
 
 /* ---------- QR scan ---------- */
 async function scanQR() {
+  if (Platform.hasCameraScan()) { // phones and tablets: native camera scanner
+    const ref = await Platform.scanQR();
+    if (ref) { const id = String(ref).trim().toUpperCase(); if (item(id)) return go('item', { id }); toast(`No record "${id}" in this vault.`); }
+    return;
+  }
   const d = modal('Open record by QR label', `<video id="qrv" playsinline style="width:100%;max-height:50vh;background:#000;border-radius:8px;display:none"></video><p class="small muted" id="qrmsg"></p>
     <form id="qrman" class="row"><input name="ref" placeholder="or type the reference, e.g. JWL-2026-00001" style="flex:1"><button class="btn pri">Open</button></form>`, '', { width: '560px', onClose: () => stream?.getTracks().forEach(t => t.stop()) });
   let stream = null;

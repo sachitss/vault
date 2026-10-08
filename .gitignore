@@ -13,3 +13,7 @@ tests/out/
 
 # never commit personal vault data
 *.vaultbak
+
+# native shell build output (generated Android/iOS projects are recreated in CI)
+src-tauri/target/
+src-tauri/gen/
