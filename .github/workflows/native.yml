@@ -176,8 +176,6 @@ jobs:
     name: Android (phones + tablets)
     runs-on: ubuntu-22.04
     timeout-minutes: 75
-    env:
-      NDK_VERSION: 27.2.12479018
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -186,7 +184,6 @@ jobs:
         with: { python-version: '3.12' }
       - uses: actions/setup-java@v4
         with: { distribution: temurin, java-version: '17' }
-      - uses: android-actions/setup-android@v3
       - uses: dtolnay/rust-toolchain@stable
         with:
           targets: aarch64-linux-android,armv7-linux-androideabi,i686-linux-android,x86_64-linux-android
@@ -195,10 +192,17 @@ jobs:
           workspaces: src-tauri -> target
           key: android
 
-      - name: Android NDK and build tools
+      - name: Android SDK, NDK and build tools (pre-installed on GitHub's Ubuntu runners)
         run: |
-          sdkmanager --install "ndk;$NDK_VERSION" "build-tools;34.0.0" "platforms;android-34" > /dev/null
-          echo "NDK_HOME=$ANDROID_HOME/ndk/$NDK_VERSION" >> $GITHUB_ENV
+          SDKM=$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager
+          yes | $SDKM --licenses > /dev/null || true
+          $SDKM --install "build-tools;34.0.0" "platforms;android-34" > /dev/null
+          NDK=${ANDROID_NDK_LATEST_HOME:-}
+          if [ -z "$NDK" ] || [ ! -d "$NDK" ]; then
+            $SDKM --install "ndk;27.2.12479018" > /dev/null; NDK=$ANDROID_HOME/ndk/27.2.12479018
+          fi
+          echo "NDK_HOME=$NDK" >> $GITHUB_ENV
+          echo "Android SDK $ANDROID_HOME, NDK $NDK"
 
       - name: Build the app (web layer)
         run: |
