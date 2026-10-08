@@ -209,7 +209,7 @@ VIEWS.settings = () => {
     <label class="f">Auto-lock after inactivity (minutes)<input type="number" name="autoLockMin" min="1" max="120" value="${st.autoLockMin}"></label>
     <label class="row small"><input type="checkbox" class="chk" name="revealNeedsPassword" ${st.revealNeedsPassword ? 'checked' : ''}> Re-enter password to reveal masked numbers</label></div>
     <div class="row" style="margin-top:10px"><button class="btn" type="button" data-act="change-pw">Change vault password</button></div>
-    <p class="small muted">Encryption: AES-256-GCM; key derived with PBKDF2-SHA-256 (${(META?.iter || PBKDF2_ITER).toLocaleString()} iterations). Failed unlocks are throttled after 5 attempts. Biometric unlock, PIN and 2FA belong to the native apps (see specification).</p></fieldset>
+    <p class="small muted">Encryption: AES-256-GCM; key derived with PBKDF2-SHA-256 (${(META?.iter || PBKDF2_ITER).toLocaleString()} iterations). Failed unlocks are throttled after 5 attempts. Biometric unlock, PIN and 2FA are planned for a later version.</p></fieldset>
   <fieldset><legend>Exchange rates → ${esc(st.baseCurrency)}</legend><p class="small muted" style="margin-top:0">1 unit of the currency = x ${esc(st.baseCurrency)}. Enter rates yourself (e.g. from ECB / Nepal Rastra Bank) — the app never fetches them online.</p>
     <div class="fields">${SCHEMA.currencies.filter(c => c !== st.baseCurrency).map(c => `<label class="f">${c}<input type="number" step="any" name="fx.${c}" value="${esc(st.fx[c] ?? '')}"></label>`).join('')}</div>
     <label class="f" style="margin-top:8px">Rates as of<input type="date" name="fxDate" value="${esc(st.fxDate)}"></label></fieldset>

@@ -4,54 +4,66 @@ Valuables Vault runs on Windows, macOS, Linux, Android, iPhone and iPad. Desktop
 
 **Before you start:** each installation keeps its own encrypted vault. The vault password cannot be recovered — store it in a password manager or sealed with your estate papers.
 
-## Windows 10 / 11
+There are three ways to install. **Use the native app** where you can: it keeps the vault in the app's own storage, where no browser clean-up can delete it.
 
-1. Download `ValuablesVault-<version>-Windows.zip`.
-2. Right-click it → **Extract All…** → **Extract**. (Running the installer from inside the ZIP does not work.)
-3. In the extracted folder, double-click **`install.bat`**.
-   If Windows SmartScreen shows "Windows protected your PC": **More info** → **Run anyway**. The scripts are plain text; you can read them first.
-4. Start **Valuables Vault** from the Start menu or the desktop shortcut.
+| | Native app | Web app | Script installer / standalone file |
+|---|---|---|---|
+| Windows, macOS, Linux | ✅ recommended | ✅ | ✅ (opens in a browser app window) |
+| Android phones & tablets | ✅ recommended | ✅ | — |
+| iPhone & iPad | after Apple signing | ✅ recommended | — |
+| Data stored in | app storage | browser storage | browser storage |
 
-What the installer does:
+## Windows 10 / 11 — native app
 
-- copies the app to `%LOCALAPPDATA%\Programs\ValuablesVault`
-- creates Start-menu and desktop shortcuts that open the app **in its own window** with Microsoft Edge (or Chrome/Brave if Edge is missing)
-- adds **Valuables Vault** to *Settings → Apps* so it can be uninstalled normally
+1. Download `Valuables-Vault_<version>_x64-setup.exe`.
+2. Double-click it. If SmartScreen shows "Windows protected your PC" (the app is not yet code-signed): **More info** → **Run anyway**.
+3. Follow the installer (English or German). It installs for your user only — no administrator rights — and adds Start-menu and desktop entries.
 
-Options (PowerShell): `install.ps1 -NoDesktopShortcut`, `-NoLaunch`, `-WhatIf` (show what would happen).
+For company PCs managed with Group Policy / Intune, use `Valuables-Vault_<version>_x64_en-US.msi` (or `_de-DE.msi`) instead. The installer downloads Microsoft's WebView2 runtime if the PC does not have it (it is built into Windows 11).
 
-## macOS 10.13 or later
+## macOS 10.15 or later — native app
 
-1. Download `ValuablesVault-<version>-macOS.zip` and double-click it to unpack.
-2. **Right-click** `install.command` → **Open** → **Open**. (Needed once: the script is not from the App Store. A plain double-click shows a warning instead.)
-3. Start **Valuables Vault** from Launchpad, Spotlight or `~/Applications`.
+1. Download `Valuables-Vault_<version>_universal.dmg` (runs natively on Apple silicon and Intel Macs).
+2. Open it and drag **Valuables Vault** to **Applications**.
+3. First start: in *Applications*, **right-click** Valuables Vault → **Open** → **Open**. (Needed once while the app is not notarised by Apple.) If macOS says the app "is damaged", run `xattr -dr com.apple.quarantine "/Applications/Valuables Vault.app"` in Terminal.
 
-The installer creates `~/Applications/Valuables Vault.app`. It opens in its own window with Chrome, Edge or Brave if installed, otherwise in Safari.
+## Linux — native app
 
-## Linux
+| Distribution | File | Install |
+|---|---|---|
+| Ubuntu, Debian, Mint, Pop!_OS | `Valuables-Vault_<version>_amd64.deb` | `sudo apt install ./Valuables-Vault_<version>_amd64.deb` |
+| Fedora, RHEL, openSUSE | `Valuables-Vault-<version>-1.x86_64.rpm` | `sudo dnf install ./Valuables-Vault-<version>-1.x86_64.rpm` |
+| Any other (no installation) | `Valuables-Vault_<version>_amd64.AppImage` | `chmod +x Valuables-Vault_*.AppImage && ./Valuables-Vault_*.AppImage` |
 
-```bash
-tar xzf ValuablesVault-<version>-Linux.tar.gz
-./ValuablesVault-<version>-Linux/install.sh
-```
+Start it from the application menu or with `valuables-vault`.
 
-Start it from your application menu or with `valuables-vault`. The app is installed to `~/ValuablesVault` (a visible folder, so snap/flatpak browsers such as Ubuntu's Chromium can open it), with a menu entry and icon in `~/.local/share` and a command in `~/.local/bin`. It opens in its own window with Chrome, Chromium, Edge or Brave, otherwise in your default browser. `VV_HOME=/path ./install.sh` installs elsewhere.
+## Android phones and tablets — native app
 
-## Android
+1. On the phone or tablet, download `Valuables-Vault_<version>_android-universal.apk` from the release page.
+2. Open the downloaded file. Android asks once to allow your browser or file manager to **install unknown apps** — allow it, then **Install**.
+3. Open **Valuables Vault**. *Scan QR* uses the camera (Android asks for permission the first time).
 
-1. Open **https://sachitss.github.io/vault/** in **Chrome**.
-2. Menu (⋮) → **Install app** (or **Add to Home screen**).
-3. Open **Vault** from the home screen. After the first start it works completely offline.
+Android 8.0 or later. The `.aab` file in the release is for publishing in Google Play, not for direct installation.
 
-## iPhone and iPad
+## iPhone and iPad — web app
 
 1. Open **https://sachitss.github.io/vault/** in **Safari**.
 2. Tap **Share** → **Add to Home Screen** → **Add**.
 3. Open **Vault** from the home screen. After the first start it works offline.
 
-iOS may delete website data of home-screen apps that have not been opened for several weeks if the device runs low on storage. Open the app regularly and **keep encrypted backups** (Backup → Create & verify backup → save to Files / iCloud Drive).
+iOS may delete website data of home-screen apps that have not been opened for several weeks if the device runs low on storage. Open the app regularly and **keep encrypted backups** (Backup → Create & verify backup → save to Files / iCloud Drive). A native iOS app follows once the project has an Apple Developer account (Apple installs only signed apps).
 
-The web app only downloads the program. Your vault data is encrypted on the phone and is never sent to GitHub or anywhere else.
+## Any browser — web app
+
+Open **https://sachitss.github.io/vault/** in Chrome, Edge, Firefox or Safari. Chrome and Edge offer **Install app** in the address bar; on Android, Chrome menu (⋮) → **Install app**. The web app only downloads the program; your vault data is encrypted on the device and is never sent to GitHub or anywhere else.
+
+## Script installers (alternative for desktops)
+
+Small installers that open the app in its own browser window — useful where the native installer cannot be used.
+
+- **Windows:** extract `ValuablesVault-<version>-Windows.zip` (right-click → *Extract All*), double-click **`install.bat`**. Installs to `%LOCALAPPDATA%\Programs\ValuablesVault` with Start-menu and desktop shortcuts using Edge (or Chrome/Brave). Options: `install.ps1 -NoDesktopShortcut`, `-NoLaunch`, `-WhatIf`.
+- **macOS 10.13+:** unzip `ValuablesVault-<version>-macOS.zip`, right-click **`install.command`** → **Open**. Creates `~/Applications/Valuables Vault.app` (Chrome, Edge or Brave, otherwise Safari).
+- **Linux:** `tar xzf ValuablesVault-<version>-Linux.tar.gz && ./ValuablesVault-<version>-Linux/install.sh`. Installs to `~/ValuablesVault` with a menu entry and the `valuables-vault` command (`VV_HOME=/path` to choose another folder).
 
 ## Standalone file (USB stick, no installation)
 
@@ -59,7 +71,7 @@ Open `ValuablesVault-<version>-Standalone.html` in Chrome, Edge, Firefox or Safa
 
 ## Updating
 
-Install the new version the same way. Your data stays: it is stored in the browser profile, not in the program folder. The web app on phones updates itself the next time it is opened online.
+Install the new version the same way, over the old one. Your data stays: it is kept in the app's storage (native app) or the browser profile (web app, script installer), not in the program folder. The web app updates itself the next time it is opened online. On Android, an update installs over the old version only if both were signed with the same release key — otherwise make a backup, uninstall, install, restore.
 
 ## Moving data between devices
 
@@ -69,22 +81,29 @@ Every installation (Windows PC, laptop, phone, web app) has its **own separate v
 2. Move the `.vaultbak` file (USB stick, your own cloud folder, e-mail to yourself — it is encrypted).
 3. On the new device: **Backup → Restore from backup file…**
 
-Automatic desktop ↔ phone sync through your own storage (NAS, WebDAV or cloud folder) is part of the native app (Phase 1 of the roadmap).
+Automatic desktop ↔ phone sync through storage you host (NAS, WebDAV or your cloud folder) is on the roadmap.
 
 ## Uninstalling
 
 | Platform | How |
 |---|---|
-| Windows | *Settings → Apps → Valuables Vault → Uninstall*, or run `uninstall.ps1` in `%LOCALAPPDATA%\Programs\ValuablesVault` |
-| macOS | Run `uninstall.command` from the download, or drag `~/Applications/Valuables Vault.app` to the Bin |
-| Linux | `~/ValuablesVault/uninstall.sh` (your backup files in that folder are kept) |
-| Android / iOS | Long-press the icon → remove the app |
+| Native app — Windows | *Settings → Apps → Valuables Vault → Uninstall* |
+| Native app — macOS | Drag *Valuables Vault* from *Applications* to the Bin |
+| Native app — Linux | `sudo apt remove valuables-vault` / `sudo dnf remove valuables-vault` / delete the AppImage |
+| Native app — Android | Long-press the icon → *Uninstall* (this **deletes the vault on the device** — back up first) |
+| Script installer — Windows | *Settings → Apps → Valuables Vault → Uninstall*, or run `uninstall.ps1` in `%LOCALAPPDATA%\Programs\ValuablesVault` |
+| Script installer — macOS | Run `uninstall.command` from the download, or drag `~/Applications/Valuables Vault.app` to the Bin |
+| Script installer — Linux | `~/ValuablesVault/uninstall.sh` (your backup files in that folder are kept) |
+| Web app | Long-press the icon → remove the app, or uninstall it from the browser |
 
-Uninstalling **does not delete your encrypted vault data**, so a re-install brings it back. To delete the data, open the app first and use **Settings → Erase vault on this device** (after making a backup).
+On desktops, uninstalling **does not delete your encrypted vault data**, so a re-install brings it back (Android removes app data with the app). To delete the data, open the app first and use **Settings → Erase vault on this device** (after making a backup).
 
 ## Where is my data?
 
-In the browser profile of the browser that opens the app (IndexedDB), always encrypted. It is **deleted if you clear "cookies and site data"** for local files or for `sachitss.github.io` in that browser — another reason for regular backups.
+Always encrypted, and only on the device:
+
+- **Native app:** in the app's private folder — Windows `%LOCALAPPDATA%\com.medtec24.valuablesvault`, macOS `~/Library/WebKit/com.medtec24.valuablesvault`, Linux `~/.local/share/com.medtec24.valuablesvault`, Android/iOS the app's sandbox. Clearing browser data does not touch it.
+- **Web app, script installer, standalone file:** in the profile of the browser that opens the app (IndexedDB). It is **deleted if you clear "cookies and site data"** for local files or for `sachitss.github.io` in that browser — another reason for regular backups.
 
 ## Help
 

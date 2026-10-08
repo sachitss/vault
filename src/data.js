@@ -432,7 +432,7 @@ async function scanQR() {
   let stream = null;
   const openRef = ref => { ref = String(ref).trim().toUpperCase(); if (item(ref)) { d.close(); go('item', { id: ref }); } else $('#qrmsg', d).textContent = `No record "${ref}" in this vault.`; };
   $('#qrman', d).onsubmit = e => { e.preventDefault(); openRef(e.target.ref.value); };
-  if (!('BarcodeDetector' in window)) { $('#qrmsg', d).textContent = 'This browser has no built-in QR scanner (supported in Chrome on Android/macOS). Type the reference instead — the native apps scan on every platform.'; return; }
+  if (!('BarcodeDetector' in window)) { $('#qrmsg', d).textContent = 'This browser has no built-in QR scanner (supported in Chrome on Android/macOS). Type the reference instead — the Android app scans with the camera.'; return; }
   try {
     const det = new BarcodeDetector({ formats: ['qr_code'] }); stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
     const v = $('#qrv', d); v.srcObject = stream; v.style.display = 'block'; await v.play(); $('#qrmsg', d).textContent = 'Point the camera at a label…';

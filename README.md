@@ -10,25 +10,26 @@ Evidence, valuations and insurance in one encrypted record per item — ready fo
 <a href="docs/INSTALL.md">Installation guide</a> ·
 <a href="docs/USER_MANUAL.md">User manual</a> ·
 <a href="SECURITY.md">Security</a> ·
-<a href="docs/DATABASE.md">Database design</a></p>
+<a href="docs/DATABASE.md">Database design</a> ·
+<a href="docs/ARCHITECTURE.md">Architecture</a></p>
 
 ---
 
 ## Install
 
-| Device | Download | Install |
+| Device | Download (from the [latest release](https://github.com/sachitss/vault/releases/latest)) | Install |
 |---|---|---|
-| **Windows 10 / 11** | `ValuablesVault-<version>-Windows.zip` | Extract the ZIP, double-click **`install.bat`**. No admin rights needed. |
-| **macOS 10.13+** | `ValuablesVault-<version>-macOS.zip` | Unzip, right-click **`install.command`** → **Open** (once). |
-| **Linux** | `ValuablesVault-<version>-Linux.tar.gz` | Extract, run **`./install.sh`**. |
-| **Android** | — | Open **https://sachitss.github.io/vault/** in Chrome → menu → **Install app**. |
-| **iPhone / iPad** | — | Open **https://sachitss.github.io/vault/** in Safari → Share → **Add to Home Screen**. |
-| **USB stick / manual** | `ValuablesVault-<version>-Standalone.html` | Open the file in Chrome, Edge, Firefox or Safari. |
+| **Windows 10 / 11** | `Valuables-Vault_<version>_x64-setup.exe` (or `…_en-US.msi` for managed PCs) | Double-click. No admin rights needed. |
+| **macOS 10.15+** (Apple silicon + Intel) | `Valuables-Vault_<version>_universal.dmg` | Open, drag **Valuables Vault** to *Applications*; first start: right-click → **Open**. |
+| **Linux** | `.deb` (Ubuntu, Debian, Mint), `.rpm` (Fedora, openSUSE) or `.AppImage` (any) | `sudo apt install ./Valuables-Vault_<version>_amd64.deb` · or make the AppImage executable and run it. |
+| **Android phones & tablets** (8.0+) | `Valuables-Vault_<version>_android-universal.apk` | Open the file on the device, allow *Install unknown apps* once. |
+| **iPhone / iPad** | — | Open **https://sachitss.github.io/vault/** in Safari → Share → **Add to Home Screen**. (Native iOS app once Apple signing is set up.) |
+| **Any browser** (Chrome, Edge, Firefox, Safari) | — | **https://sachitss.github.io/vault/** — works offline, can be installed as an app. |
+| **No installation / USB stick** | `ValuablesVault-<version>-Standalone.html` | Open the file in a browser. Script-based installers for Windows/macOS/Linux are also attached. |
 
-All downloads are on the [Releases page](https://github.com/sachitss/vault/releases/latest), with checksums in `SHA256SUMS.txt`.
-Details, updating and uninstalling: **[docs/INSTALL.md](docs/INSTALL.md)**.
+Checksums are in `SHA256SUMS.txt`. Details, updating and uninstalling: **[docs/INSTALL.md](docs/INSTALL.md)**.
 
-> **Important:** each installation keeps its own encrypted vault on that device. To move or copy your data to another device, use **Backup → Create & verify backup** and **Restore** there. Desktop ↔ phone sync is planned for the native app.
+> **Important:** each installation keeps its own encrypted vault on that device. To move or copy your data to another device, use **Backup → Create & verify backup** and **Restore** there. Desktop ↔ phone sync through storage you host is on the roadmap.
 
 ## What it does
 
@@ -53,7 +54,7 @@ Read **[SECURITY.md](SECURITY.md)** for the threat model and limits of the curre
 
 ## Status
 
-Version **0.9.0** is a fully working prototype that runs in the browser (desktop installers wrap it in its own app window). The roadmap moves to a native Flutter app with an encrypted database, biometric unlock and desktop ↔ phone sync through storage you own. See [CHANGELOG.md](CHANGELOG.md).
+Version **0.9.0** is the first release: one code base that runs as a native app on Windows, macOS, Linux and Android (Tauri 2), as an installable web app in every modern browser, and — once Apple signing is set up — natively on iPhone and iPad. Why this architecture, and its current limits: **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)**. Next: the SQLite/SQLCipher storage engine, biometric unlock and desktop ↔ phone sync through storage you own. See [CHANGELOG.md](CHANGELOG.md).
 
 ## For developers
 
@@ -63,7 +64,8 @@ pip install -r tools/requirements.txt    # build, template and test tooling
 python -m playwright install chromium
 python3 tools/build.py                   # → dist/valuables-vault.html and dist/pwa/
 python3 tests/run_all.py                 # browser tests
-python3 tools/package.py                 # → dist/release/ (installers)
+python3 tools/package.py                 # → dist/release/ (script installers, standalone file)
+npx tauri build                          # → native installers for this OS (needs Rust, see DEVELOPMENT.md)
 ```
 
 See **[docs/DEVELOPMENT.md](docs/DEVELOPMENT.md)** for the project layout, releases and the web-app deployment, and **[docs/DATABASE.md](docs/DATABASE.md)** for the relational database (SQLite/SQLCipher schema, ER diagrams, integrity rules, migration from app backups).

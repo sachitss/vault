@@ -21,7 +21,7 @@
 - **Exports and printed reports are not encrypted.** Confidential fields are masked unless you explicitly include them. Store exports on an encrypted drive and delete them when done.
 - **A compromised device is out of scope.** Malware or a person with access to your unlocked computer can read what you can read. Lock the vault (or let it auto-lock) when you step away.
 - **Shared browser profile.** In Chromium browsers, local HTML files share one storage origin. Another local HTML file you open could read the *encrypted* vault records, but not decrypt them.
-- **Prototype.** Version 0.9 has not had an external security audit. Biometric unlock, PIN, hardware-backed keys and Argon2id are planned for the native app.
+- **Prototype.** Version 0.9 has not had an external security audit. Biometric unlock, PIN, hardware-backed keys and Argon2id are planned for a later version of the native apps.
 
 ## Privacy (GDPR)
 

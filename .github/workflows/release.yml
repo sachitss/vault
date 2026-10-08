@@ -39,12 +39,16 @@ jobs:
           ### Downloads
           | Platform | File | How to install |
           |---|---|---|
-          | Windows 10/11 | `ValuablesVault-*-Windows.zip` | Extract, double-click `install.bat` |
-          | macOS 10.13+ | `ValuablesVault-*-macOS.zip` | Unzip, right-click `install.command` > Open |
-          | Linux | `ValuablesVault-*-Linux.tar.gz` | Extract, run `./install.sh` |
-          | Android, iPhone, iPad | — | Open https://sachitss.github.io/vault/ and choose *Install app* / *Add to Home Screen* |
-          | Any (manual / USB stick) | `ValuablesVault-*-Standalone.html` | Open in Chrome, Edge, Firefox or Safari |
+          | Windows 10/11 | `Valuables-Vault_*_x64-setup.exe` (or `.msi`) | Double-click; SmartScreen: More info > Run anyway |
+          | macOS 10.15+ | `Valuables-Vault_*_universal.dmg` | Drag to Applications; first start: right-click > Open |
+          | Linux | `.deb`, `.rpm` or `.AppImage` | `sudo apt install ./Valuables-Vault_*_amd64.deb` |
+          | Android 8+ (phones, tablets) | `Valuables-Vault_*_android-universal.apk` | Open on the device, allow *Install unknown apps* |
+          | iPhone, iPad, any browser | — | https://sachitss.github.io/vault/ > *Add to Home Screen* / *Install app* |
+          | Alternative (desktop) | `ValuablesVault-*-Windows.zip` / `-macOS.zip` / `-Linux.tar.gz` | Script installers: `install.bat` / `install.command` / `install.sh` |
+          | No installation | `ValuablesVault-*-Standalone.html` | Open in Chrome, Edge, Firefox or Safari |
 
+          The native installers are added by the *Native apps* workflow about 30 minutes after publishing.
+          Full guide: [docs/INSTALL.md](https://github.com/sachitss/vault/blob/main/docs/INSTALL.md).
           Verify downloads with `SHA256SUMS.txt`. Powered by © Ing.-Büro Sachit Shrestha · support@medtec24.com
           MD
 

@@ -3856,7 +3856,7 @@ VIEWS.settings = () => {
     <label class="f">Auto-lock after inactivity (minutes)<input type="number" name="autoLockMin" min="1" max="120" value="${st.autoLockMin}"></label>
     <label class="row small"><input type="checkbox" class="chk" name="revealNeedsPassword" ${st.revealNeedsPassword ? 'checked' : ''}> Re-enter password to reveal masked numbers</label></div>
     <div class="row" style="margin-top:10px"><button class="btn" type="button" data-act="change-pw">Change vault password</button></div>
-    <p class="small muted">Encryption: AES-256-GCM; key derived with PBKDF2-SHA-256 (${(META?.iter || PBKDF2_ITER).toLocaleString()} iterations). Failed unlocks are throttled after 5 attempts. Biometric unlock, PIN and 2FA belong to the native apps (see specification).</p></fieldset>
+    <p class="small muted">Encryption: AES-256-GCM; key derived with PBKDF2-SHA-256 (${(META?.iter || PBKDF2_ITER).toLocaleString()} iterations). Failed unlocks are throttled after 5 attempts. Biometric unlock, PIN and 2FA are planned for a later version.</p></fieldset>
   <fieldset><legend>Exchange rates → ${esc(st.baseCurrency)}</legend><p class="small muted" style="margin-top:0">1 unit of the currency = x ${esc(st.baseCurrency)}. Enter rates yourself (e.g. from ECB / Nepal Rastra Bank) — the app never fetches them online.</p>
     <div class="fields">${SCHEMA.currencies.filter(c => c !== st.baseCurrency).map(c => `<label class="f">${c}<input type="number" step="any" name="fx.${c}" value="${esc(st.fx[c] ?? '')}"></label>`).join('')}</div>
     <label class="f" style="margin-top:8px">Rates as of<input type="date" name="fxDate" value="${esc(st.fxDate)}"></label></fieldset>
@@ -4322,7 +4322,7 @@ async function scanQR() {
   let stream = null;
   const openRef = ref => { ref = String(ref).trim().toUpperCase(); if (item(ref)) { d.close(); go('item', { id: ref }); } else $('#qrmsg', d).textContent = `No record "${ref}" in this vault.`; };
   $('#qrman', d).onsubmit = e => { e.preventDefault(); openRef(e.target.ref.value); };
-  if (!('BarcodeDetector' in window)) { $('#qrmsg', d).textContent = 'This browser has no built-in QR scanner (supported in Chrome on Android/macOS). Type the reference instead — the native apps scan on every platform.'; return; }
+  if (!('BarcodeDetector' in window)) { $('#qrmsg', d).textContent = 'This browser has no built-in QR scanner (supported in Chrome on Android/macOS). Type the reference instead — the Android app scans with the camera.'; return; }
   try {
     const det = new BarcodeDetector({ formats: ['qr_code'] }); stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
     const v = $('#qrv', d); v.srcObject = stream; v.style.display = 'block'; await v.play(); $('#qrmsg', d).textContent = 'Point the camera at a label…';
