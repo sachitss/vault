@@ -107,7 +107,10 @@ self.addEventListener('install', e => {{ e.waitUntil(caches.open(CACHE).then(c =
 self.addEventListener('activate', e => {{ e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim())); }});
 self.addEventListener('fetch', e => {{
   const r = e.request; if (r.method !== 'GET' || new URL(r.url).origin !== location.origin) return;
-  if (r.mode === 'navigate') {{ e.respondWith(caches.match('index.html').then(c => c || fetch(r))); return; }}
+  const path = new URL(r.url).pathname;
+  // the app itself starts offline from the cache; other pages (privacy.html) come from the network
+  if (r.mode === 'navigate' && (path.endsWith('/') || path.endsWith('/index.html'))) {{ e.respondWith(caches.match('index.html').then(c => c || fetch(r))); return; }}
+  if (r.mode === 'navigate') {{ e.respondWith(fetch(r).catch(() => caches.match('index.html'))); return; }}
   e.respondWith(caches.match(r).then(c => c || fetch(r)));
 }});
 """
